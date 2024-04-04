@@ -65,7 +65,7 @@ public class C03L03 : Lesson
     }
 
     private const string SystemMessage = """
-                                         You are a professional riddle guesser that know a lot of trivia about the world and famous personas. You will be provided with a trivia in Polish about a famous person and you need to guess who it is. The answer should be provided in Polish.
+                                         You are a professional riddle guesser that knows a lot of trivia about the world and famous personas. You will be provided with a trivia in Polish about a famous person and you need to guess who it is. The answer should be provided in Polish.
                                          Rules:
                                          - If you you're not 100% sure, reply with "X"
                                          - If you're sure, reply with the name of the person ONLY without any additional information or comments
