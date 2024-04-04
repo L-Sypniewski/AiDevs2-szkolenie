@@ -5,4 +5,5 @@ public record TaskModel(
     string Msg,
     string Question,
     object Input,
+    string Hint,
     List<string> Blog);

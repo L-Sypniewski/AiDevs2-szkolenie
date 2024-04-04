@@ -19,11 +19,12 @@ public class C03L02 : Lesson
         const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537";
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
 
-        var (token, (_, _, question, input, _)) = await GetTaskWithToken(configuration, httpClient);
+        var (token, task) = await GetTaskWithToken(configuration, httpClient);
 
-        var textUrl = new Uri(input.ToString()!);
+        var textUrl = new Uri(task.Input.ToString()!);
         var context = await httpClient.GetStringAsync(textUrl);
         var semanticKernel = BuildSemanticKernel(configuration);
+        var question = task.Question;
 
         var prompt = $"""
                       You answer the questions only by using the context provided below. Do not rely on your knowledge. Always provide the answer in Polish.

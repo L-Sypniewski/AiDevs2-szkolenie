@@ -13,13 +13,13 @@ public abstract class Lesson : IModule
 
     protected string GetBaseUrl(IConfiguration configuration) => configuration.GetValue<string>("AiDevsBaseUrl")!;
 
-    private async Task<string> GetToken(IConfiguration configuration, HttpClient httpClient) =>
-        await AiDevsHelper.GetToken(GetBaseUrl(configuration), TaskName, configuration.GetValue<string>("ApiKey")!, httpClient);
-
     private Delegate GetTaskDelegate => async ([FromServices] IConfiguration configuration, [FromServices] HttpClient httpClient) =>
         await AiDevsHelper.GetTask(GetBaseUrl(configuration), await GetToken(configuration, httpClient), httpClient);
 
     public IServiceCollection RegisterModule(IHostApplicationBuilder hostApplicationBuilder) => hostApplicationBuilder.Services;
+
+    protected async Task<string> GetToken(IConfiguration configuration, HttpClient httpClient) =>
+        await AiDevsHelper.GetToken(GetBaseUrl(configuration), TaskName, configuration.GetValue<string>("ApiKey")!, httpClient);
 
     protected async Task<(string token, TaskModel task)> GetTaskWithToken(IConfiguration configuration, HttpClient httpClient)
     {
@@ -33,7 +33,9 @@ public abstract class Lesson : IModule
         var builder = Kernel.CreateBuilder();
         var openAiApiKey = configuration.GetValue<string>("OpenAiKey")!;
 #pragma warning disable SKEXP0010
-        builder.AddOpenAIChatCompletion(model, apiKey: openAiApiKey).AddOpenAITextEmbeddingGeneration(embeddingModel, apiKey: openAiApiKey);
+        builder.Services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Trace).AddSimpleConsole())
+            .AddOpenAIChatCompletion(model, apiKey: openAiApiKey)
+            .AddOpenAITextEmbeddingGeneration(embeddingModel, apiKey: openAiApiKey);
         return builder.Build();
     }
 
