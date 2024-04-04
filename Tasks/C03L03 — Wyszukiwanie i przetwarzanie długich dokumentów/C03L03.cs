@@ -91,9 +91,9 @@ public class C03L03 : Lesson
                                          """;
 
     private const string Prompt = """
-                                     ### Current information about the person:
-                                     {{$history}}
-                                     {{$newHint}}
-                                     ###
-                                     """;
+                                  ### Current information about the person:
+                                  {{$history}}
+                                  {{$newHint}}
+                                  ###
+                                  """;
 }
