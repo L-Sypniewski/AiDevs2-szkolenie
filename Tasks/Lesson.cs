@@ -1,9 +1,13 @@
 using AiDevs2_szkolenie.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Connectors.Qdrant;
+using Microsoft.SemanticKernel.Memory;
 
 namespace AiDevs2_szkolenie.Tasks;
 
+#pragma warning disable SKEXP0010, SKEXP0001, SKEXP0020
 public abstract class Lesson : IModule
 {
     protected abstract string LessonName { get; }
@@ -32,11 +36,29 @@ public abstract class Lesson : IModule
     {
         var builder = Kernel.CreateBuilder();
         var openAiApiKey = configuration.GetValue<string>("OpenAiKey")!;
-#pragma warning disable SKEXP0010
         builder.Services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Trace).AddSimpleConsole())
             .AddOpenAIChatCompletion(model, apiKey: openAiApiKey)
             .AddOpenAITextEmbeddingGeneration(embeddingModel, apiKey: openAiApiKey);
         return builder.Build();
+    }
+
+    protected static ISemanticTextMemory BuildMemory(
+        IConfiguration configuration,
+        ILoggerFactory loggerFactory,
+        string embeddingModel = "text-embedding-ada-002")
+    {
+        var qdrantUrl = configuration.GetValue<string>("QdrantUrl")!;
+
+        var dimensions = embeddingModel switch
+        {
+            "text-embedding-ada-002" => 1536,
+            _ => throw new ArgumentException("Unknown embedding model", nameof(embeddingModel))
+        };
+
+        return new MemoryBuilder().WithOpenAITextEmbeddingGeneration(embeddingModel, apiKey: configuration.GetValue<string>("OpenAiKey")!)
+            .WithLoggerFactory(loggerFactory)
+            .WithQdrantMemoryStore(qdrantUrl, dimensions)
+            .Build();
     }
 
     public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
