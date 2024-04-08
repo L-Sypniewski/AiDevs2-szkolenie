@@ -6,4 +6,7 @@ public record TaskModel(
     string Question,
     object Input,
     string Hint,
-    List<string> Blog);
+    string? Data,
+    string? Hint1,
+    string? Hint2,
+    List<string>? Blog);

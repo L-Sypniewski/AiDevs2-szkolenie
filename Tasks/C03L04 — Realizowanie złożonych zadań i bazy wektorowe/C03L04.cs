@@ -26,18 +26,18 @@ public class C03L04 : Lesson
 
         var httpClient = httpClientFactory.CreateClient();
 
-        var archiveData = (await httpClient.GetFromJsonAsync<ArchiveModel[]>(configuration.GetValue<Uri>("C03L04Url"),
+        var archiveModels = (await httpClient.GetFromJsonAsync<ArchiveModel[]>(configuration.GetValue<Uri>("C03L04Url"),
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }))!.ToArray();
 
         var memory = BuildMemory(configuration, loggerFactory);
 
-        await IndexNewData(archiveData, memory, CollectionName);
+        await IndexNewData(archiveModels, memory, CollectionName);
 
-        var top5Matches = await memory.SearchAsync(CollectionName, question, limit: 3).ToListAsync();
+        var topMatches = await memory.SearchAsync(CollectionName, question, limit: 3).ToListAsync();
 
         var answerResponse = await AiDevsHelper.SendAnswer(GetBaseUrl(configuration), await GetToken(configuration, httpClient),
-            JsonSerializer.Serialize(top5Matches[0].Metadata.AdditionalMetadata), httpClient);
-        return new { Question = question, Answer = top5Matches, AnswerResponse = answerResponse };
+            JsonSerializer.Serialize(topMatches[0].Metadata.AdditionalMetadata), httpClient);
+        return new { Question = question, Answer = topMatches, AnswerResponse = answerResponse };
     };
 
     private static async Task IndexNewData(ArchiveModel[] archiveData, ISemanticTextMemory memory, string collectionName)
