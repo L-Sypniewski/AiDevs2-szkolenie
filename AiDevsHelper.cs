@@ -19,6 +19,7 @@ public static class AiDevsHelper
 
     public static async Task<TaskModel> GetTask(string baseUrl, string token, HttpClient client)
     {
+        var fromstringAsync = await client.GetStringAsync($"{baseUrl}/task/{token}");
         var fromJsonAsync = await client.GetFromJsonAsync<TaskModel>($"{baseUrl}/task/{token}");
         return fromJsonAsync!;
     }
