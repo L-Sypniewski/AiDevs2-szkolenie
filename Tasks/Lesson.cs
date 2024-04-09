@@ -39,7 +39,6 @@ public abstract class Lesson : IModule
         builder.Services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Trace).AddSimpleConsole())
             .AddOpenAIChatCompletion(model, apiKey: openAiApiKey)
             .AddOpenAITextEmbeddingGeneration(embeddingModel, apiKey: openAiApiKey);
-        // builder.Services.AddSingleton<CurrencyPlugin>();
         builder.Services.AddHttpClient<CurrencyPlugin>();
         builder.Services.AddHttpClient<PopulationPlugin>();
         return builder.Build();
