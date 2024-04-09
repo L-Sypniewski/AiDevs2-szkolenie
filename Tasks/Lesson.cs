@@ -15,7 +15,7 @@ public abstract class Lesson : IModule
 
     protected abstract Delegate SendAnswerDelegate { get; }
 
-    protected string GetBaseUrl(IConfiguration configuration) => configuration.GetValue<string>("AiDevsBaseUrl")!;
+    protected static string GetBaseUrl(IConfiguration configuration) => configuration.GetValue<string>("AiDevsBaseUrl")!;
 
     private Delegate GetTaskDelegate => async ([FromServices] IConfiguration configuration, [FromServices] HttpClient httpClient) =>
         await AiDevsHelper.GetTask(GetBaseUrl(configuration), await GetToken(configuration, httpClient), httpClient);
