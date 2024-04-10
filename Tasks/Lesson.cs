@@ -36,7 +36,7 @@ public abstract class Lesson : IModule
     {
         var builder = Kernel.CreateBuilder();
         var openAiApiKey = configuration.GetValue<string>("OpenAiKey")!;
-        builder.Services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Trace).AddSimpleConsole())
+        builder.Services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Debug).AddSimpleConsole())
             .AddOpenAIChatCompletion(model, apiKey: openAiApiKey)
             .AddOpenAITextEmbeddingGeneration(embeddingModel, apiKey: openAiApiKey);
         builder.Services.AddHttpClient<CurrencyPlugin>();
