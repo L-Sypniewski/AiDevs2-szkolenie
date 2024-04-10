@@ -40,7 +40,7 @@ public class C04L02 : Lesson
         [FromServices] OpenAiClient openAiClient,
         [FromQuery] string? customQuestion = null) =>
     {
-        var (_, task) = await GetTaskWithToken(configuration, httpClientFactory.CreateClient());
+        var (token, task) = await GetTaskWithToken(configuration, httpClientFactory.CreateClient());
         var kernel = BuildSemanticKernel(configuration, model: "gpt-4-turbo");
         kernel.ImportPluginFromType<TimeCalculationPlugin>();
         kernel.ImportPluginFromType<ToDoPlugin>();
@@ -50,9 +50,9 @@ public class C04L02 : Lesson
         var answer = await AutomaticFunctionCalling(kernel, question, logger);
         var serializedAnswer = JsonSerializer.Serialize(answer, ToolModel.SerializerOptions);
 
-        var answerResponse = await AiDevsHelper.SendAnswer(GetBaseUrl(configuration), await GetToken(configuration, httpClientFactory.CreateClient()),
+        var answerResponse = await AiDevsHelper.SendAnswer(GetBaseUrl(configuration), token,
             serializedAnswer, httpClientFactory.CreateClient());
-        return new { Question = question, Answer = serializedAnswer, AnswerResponse = answerResponse };
+        return new { Question = question, Answer = answer, AnswerResponse = answerResponse };
     };
 
     private static async Task<ToolModel> AutomaticFunctionCalling(Kernel kernel, string question, ILogger logger)
