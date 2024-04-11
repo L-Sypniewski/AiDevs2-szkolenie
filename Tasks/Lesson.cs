@@ -70,8 +70,12 @@ public abstract class Lesson : IModule
 
         group.MapGet("task", GetTaskDelegate).WithName($"Get task: {LessonName}").WithOpenApi();
 
+        MapAdditionalEndpoints(group);
+
         group.WithTags(LessonName);
 
         return endpoints;
     }
+
+    protected virtual void MapAdditionalEndpoints(IEndpointRouteBuilder endpoints) { }
 }
