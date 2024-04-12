@@ -82,24 +82,30 @@ public class C04L05Answer : Lesson
         var question = body["question"]!.GetValue<string>();
         var kernel = BuildSemanticKernel(configuration);
         var memory = BuildMemory(configuration, loggerFactory);
+        
+        logger.LogWarning("Question: {Question}", question);
 
 
         var answer = await ReplyToFirstQuestion(question, memory, kernel);
 
         var answerText = JsonSerializer.Deserialize<JsonObject>(answer);
+        logger.LogWarning("answerText: {AnswerText}", answerText);
 
         if (answerText.ContainsKey("question"))
         {
             var questionResult = new { reply = await ReplyToActualQuestion(answerText["question"]!.GetValue<string>(), memory, kernel) };
+            logger.LogWarning("questionResult: {QuestionResult}", questionResult);
             return TypedResults.Json(questionResult);
         }
 
         if (answerText.ContainsKey("information"))
         {
             var informationResult = new { reply = await ReplyToInformation(answerText["information"]!.GetValue<string>(), memory) };
+            logger.LogWarning("informationResult: {InformationResult}", informationResult);
             return TypedResults.Json(informationResult);
         }
 
+        logger.LogError("answerText doesn't contain expected json keys: {AnswerText}", answerText);
         return TypedResults.Json(new { reply = "Error" }, statusCode: StatusCodes.Status500InternalServerError);
     };
 
