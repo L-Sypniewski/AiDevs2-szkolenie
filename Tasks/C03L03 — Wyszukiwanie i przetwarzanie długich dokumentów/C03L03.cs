@@ -38,7 +38,7 @@ public class C03L03 : Lesson
         var answerFunction = semanticKernel.CreateFunctionFromPrompt(Prompt,
             new OpenAIPromptExecutionSettings { MaxTokens = 30, Temperature = 0.2, ChatSystemPrompt = SystemMessage });
 
-        var kernelArguments = new KernelArguments()
+        var kernelArguments = new KernelArguments
         {
             ["history"] = "",
             ["newHint"] = ""

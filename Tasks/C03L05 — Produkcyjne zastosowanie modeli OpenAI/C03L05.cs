@@ -148,7 +148,7 @@ public class C03L05 : Lesson
                               Q: {{$question}}
                               """;
 
-        var kernelArguments = new KernelArguments()
+        var kernelArguments = new KernelArguments
         {
             ["question"] = question,
             ["favouriteFood"] = person.FavouriteFood,

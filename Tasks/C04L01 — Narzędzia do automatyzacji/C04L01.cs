@@ -48,7 +48,7 @@ public class C04L01 : Lesson
         chatHistory.AddMessage(AuthorRole.System, SystemPrompt);
         chatHistory.AddMessage(AuthorRole.User, question);
 
-        var promptExecutionSettings = new OpenAIPromptExecutionSettings()
+        var promptExecutionSettings = new OpenAIPromptExecutionSettings
         {
             ToolCallBehavior = ToolCallBehavior.EnableKernelFunctions,
             Temperature = 0
@@ -62,7 +62,7 @@ public class C04L01 : Lesson
 
     private static async Task<string> AutomaticFunctionCalling(Kernel kernel, string question, ILogger logger)
     {
-        var promptExecutionSettings = new OpenAIPromptExecutionSettings()
+        var promptExecutionSettings = new OpenAIPromptExecutionSettings
         {
             ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions,
             Temperature = 0
