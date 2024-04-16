@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 
 namespace AiDevs2_szkolenie.Tasks;
 
@@ -26,7 +28,8 @@ public record ToolModel
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         PropertyNameCaseInsensitive = true,
-        Converters = { new CustomDateTimeConverter() }
+        Converters = { new CustomDateTimeConverter() },
+        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
     };
 }
 
