@@ -15,7 +15,7 @@ public class C01L04_Blogger : Lesson
         [FromServices] OpenAiClient openAiClient) =>
     {
         var (token, task) = await GetTaskWithToken(configuration, httpClient);
-        var answer = await GetBlogPosts(task.Blog, configuration);
+        var answer = await GetBlogPosts(task.Blog!, configuration);
 
         await AiDevsHelper.SendAnswer(GetBaseUrl(configuration), token, answer, httpClient);
         return answer;

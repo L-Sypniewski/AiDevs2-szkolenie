@@ -12,9 +12,9 @@ public static class AiDevsHelper
         var response = await client.PostAsync($"{baseUrl}/token/{taskName}", content);
         response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
-        var responseValues = JsonSerializer.Deserialize<Dictionary<string, object>>(responseString);
+        var responseValues = JsonSerializer.Deserialize<Dictionary<string, object>>(responseString)!;
         var result = responseValues["token"].ToString();
-        return result;
+        return result!;
     }
 
     public static async Task<TaskModel> GetTask(string baseUrl, string token, HttpClient client)

@@ -91,7 +91,7 @@ public class C04L05Answer : Lesson
         var answerText = JsonSerializer.Deserialize<JsonObject>(answer);
         logger.LogWarning("answerText: {AnswerText}", answerText);
 
-        if (answerText.ContainsKey("question"))
+        if (answerText!.ContainsKey("question"))
         {
             var questionResult = new { reply = await ReplyToActualQuestion(answerText["question"]!.GetValue<string>(), memory, kernel) };
             logger.LogWarning("questionResult: {QuestionResult}", questionResult);
