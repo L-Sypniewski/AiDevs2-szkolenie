@@ -6,6 +6,7 @@ namespace AiDevs3.Tasks.S01E01___Interakcja_z_dużym_modelem_językowym;
 
 public class S01E01 : Lesson
 {
+    private const string Username = "tester";
     protected override string LessonName => "Interakcja z dużym modelem językowym";
 
     protected override Delegate GetAnswerDelegate => async (
@@ -16,27 +17,93 @@ public class S01E01 : Lesson
     {
         var baseUrl = configuration.GetValue<string>("AgentsUrl")!;
         var password = configuration.GetValue<string>("S01E01_Password")!;
-        const string Username = "tester";
 
+        var questionResult = await GetQuestionFromServer(httpClient, baseUrl, logger);
+        var answerResult = await GetAnswerFromLlm(semanticKernelClient, questionResult, logger);
+        var submissionResult = await SubmitAnswerToServer(httpClient, baseUrl, Username, password, answerResult, logger);
+        var downloadUrl = ExtractDownloadUrl(submissionResult, baseUrl);
+        var finalContent = await GetFinalContent(httpClient, downloadUrl, logger);
+
+        return TypedResults.Ok(finalContent);
+    };
+
+    private static async Task<string> GetQuestionFromServer(
+        HttpClient httpClient,
+        string baseUrl,
+        ILogger logger)
+    {
         logger.LogInformation("Starting question fetch from {BaseUrl}", baseUrl);
-        var question = await FetchQuestion(httpClient, baseUrl);
+        var response = await httpClient.GetStringAsync(baseUrl);
+
+        var question = ExtractQuestionFromHtml(response);
         logger.LogInformation("Retrieved question: {Question}", question);
 
+        return question;
+    }
+
+    private static string ExtractQuestionFromHtml(string html)
+    {
+        var questionPattern = @"Question:.*?<br\s*/>(?<question>.*?)</p>";
+        var match = Regex.Match(html, questionPattern, RegexOptions.Singleline);
+
+        if (!match.Success)
+        {
+            throw new InvalidOperationException("Could not find question in the response");
+        }
+
+        return match.Groups["question"].Value.Trim();
+    }
+
+    private static async Task<int> GetAnswerFromLlm(
+        SemanticKernelClient semanticKernelClient,
+        string question,
+        ILogger logger)
+    {
         logger.LogInformation("Requesting answer from LLM for question: {Question}", question);
-        var answer = await FetchAnswer(semanticKernelClient, Username, password, question);
+
+        const string SystemPrompt =
+            "You are a knowledgeable assistant specializing in historical dates. Always respond with only the number, without any additional text or formatting.";
+        var userPrompt = $"What is the answer to this question: {question}";
+
+        var answer = await semanticKernelClient.ExecutePrompt("gpt-4o-mini-2024-07-18", SystemPrompt, userPrompt);
         logger.LogInformation("Received answer from LLM: {Answer}", answer);
 
+        return ParseAnswer(answer);
+    }
+
+    private static int ParseAnswer(string answer)
+    {
+        var isNumber = int.TryParse(answer, out var result);
+        if (!isNumber)
+        {
+            throw new InvalidOperationException("Answer is not a number");
+        }
+
+        return result;
+    }
+
+    private static async Task<string> SubmitAnswerToServer(
+        HttpClient httpClient,
+        string baseUrl,
+        string username,
+        string password,
+        int answer,
+        ILogger logger)
+    {
+        logger.LogInformation("Posting answer to {BaseUrl}", baseUrl);
+
         var content = new FormUrlEncodedContent([
-            new KeyValuePair<string, string>("username", Username),
+            new KeyValuePair<string, string>("username", username),
             new KeyValuePair<string, string>("password", password),
             new KeyValuePair<string, string>("answer", answer.ToString())
         ]);
 
-        logger.LogInformation("Posting answer to {BaseUrl}", baseUrl);
         var response = await httpClient.PostAsync(baseUrl, content);
-        var htmlResponse = await response.Content.ReadAsStringAsync();
+        return await response.Content.ReadAsStringAsync();
+    }
 
-        // Extract relative URL from HTML response
+    private static string ExtractDownloadUrl(string htmlResponse, string baseUrl)
+    {
         const string UrlPattern = """<a\s+href="(?<relativeUrl>/files/[^"]+)">""";
         var match = Regex.Match(htmlResponse, UrlPattern);
 
@@ -47,44 +114,20 @@ public class S01E01 : Lesson
 
         var relativeUrl = match.Groups["relativeUrl"].Value;
         var baseUri = new Uri(baseUrl);
-        var fullUrl = new Uri(baseUri, relativeUrl).ToString();
-
-        logger.LogInformation("Extracted download URL: {FullUrl}", fullUrl);
-
-        logger.LogInformation("Fetching content from download URL");
-        var finalContent = await httpClient.GetStringAsync(fullUrl);
-        logger.LogInformation("Retrieved final content, length: {ContentLength}", finalContent.Length);
-
-        return TypedResults.Ok(finalContent);
-    };
-
-    private static async Task<string> FetchQuestion(HttpClient httpClient, string baseUrl)
-    {
-        var response = await httpClient.GetStringAsync(baseUrl);
-        var questionPattern = @"Question:.*?<br\s*/>(?<question>.*?)</p>";
-        var match = Regex.Match(response, questionPattern, RegexOptions.Singleline);
-
-        if (!match.Success)
-        {
-            throw new InvalidOperationException("Could not find question in the response");
-        }
-
-        return match.Groups["question"].Value.Trim();
+        return new Uri(baseUri, relativeUrl).ToString();
     }
 
-    private static async Task<int> FetchAnswer(SemanticKernelClient semanticKernelClient, string username, string password, string question)
+    private static async Task<string> GetFinalContent(
+        HttpClient httpClient,
+        string downloadUrl,
+        ILogger logger)
     {
-        const string SystemPrompt =
-            "You are a knowledgeable assistant specializing in historical dates. Always respond with only the number, without any additional text or formatting.";
-        var userPrompt = $"What is the answer to this question: {question}";
-        var answer = await semanticKernelClient.ExecutePrompt("gpt-4o-mini-2024-07-18", SystemPrompt, userPrompt);
+        logger.LogInformation("Extracted download URL: {DownloadUrl}", downloadUrl);
+        logger.LogInformation("Fetching content from download URL");
 
-        var isNumber = int.TryParse(answer, out var result);
-        if (!isNumber)
-        {
-            throw new InvalidOperationException("Answer is not a number");
-        }
+        var finalContent = await httpClient.GetStringAsync(downloadUrl);
+        logger.LogInformation("Retrieved final content, length: {ContentLength}", finalContent.Length);
 
-        return result;
+        return finalContent;
     }
 }
