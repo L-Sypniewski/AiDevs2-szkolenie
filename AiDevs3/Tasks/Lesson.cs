@@ -1,6 +1,4 @@
 using AiDevs3.DependencyInjection;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.SemanticKernel;
 
 namespace AiDevs3.Tasks;
 

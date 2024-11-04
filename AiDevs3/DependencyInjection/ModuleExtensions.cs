@@ -1,5 +1,4 @@
 using System.Reflection;
-using AiDevs3.DependencyInjection;
 
 namespace AiDevs3.DependencyInjection;
 
