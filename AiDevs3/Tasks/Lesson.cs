@@ -1,5 +1,6 @@
 using AiDevs3.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SemanticKernel;
 
 namespace AiDevs3.Tasks;
 
@@ -7,33 +8,14 @@ namespace AiDevs3.Tasks;
 public abstract class Lesson : IModule
 {
     protected abstract string LessonName { get; }
-    protected abstract string TaskName { get; }
-
-    protected abstract Delegate SendAnswerDelegate { get; }
-
-    protected static string GetBaseUrl(IConfiguration configuration) => configuration.GetValue<string>("AiDevsBaseUrl")!;
-
-    private Delegate GetTaskDelegate => async ([FromServices] IConfiguration configuration, [FromServices] HttpClient httpClient) =>
-        await AiDevsHelper.GetTask(GetBaseUrl(configuration), await GetToken(configuration, httpClient), httpClient);
+    protected abstract Delegate GetAnswerDelegate { get; }
 
     public IServiceCollection RegisterModule(IHostApplicationBuilder hostApplicationBuilder) => hostApplicationBuilder.Services;
-
-    protected async Task<string> GetToken(IConfiguration configuration, HttpClient httpClient) =>
-        await AiDevsHelper.GetToken(GetBaseUrl(configuration), TaskName, configuration.GetValue<string>("ApiKey")!, httpClient);
-
-    protected async Task<(string token, TaskModel task)> GetTaskWithToken(IConfiguration configuration, HttpClient httpClient)
-    {
-        var token = await GetToken(configuration, httpClient);
-        var task = await AiDevsHelper.GetTask(GetBaseUrl(configuration), token, httpClient);
-        return (token, task);
-    }
 
     public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup(GetType().Name);
-        group.MapGet("answer", SendAnswerDelegate).WithName($"Send answer: {LessonName}").WithOpenApi();
-
-        group.MapGet("task", GetTaskDelegate).WithName($"Get task: {LessonName}").WithOpenApi();
+        group.MapGet("answer", GetAnswerDelegate).WithName($"Get answer: {LessonName}").WithOpenApi();
 
         MapAdditionalEndpoints(group);
 

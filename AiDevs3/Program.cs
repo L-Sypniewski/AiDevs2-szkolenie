@@ -1,4 +1,5 @@
 ﻿using AiDevs3.DependencyInjection;
+using AiDevs3.SemanticKernel;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSemanticKernel(builder.Configuration);
 builder.Services.AddLogging(loggingBuilder =>
 {
     loggingBuilder.AddSimpleConsole();
