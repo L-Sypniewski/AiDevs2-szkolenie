@@ -1,7 +1,9 @@
+using System.ClientModel;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using OpenAI;
 using OpenAI.Chat;
 
 namespace AiDevs3.SemanticKernel;
@@ -15,22 +17,17 @@ public class SemanticKernelFactory
     public Kernel BuildSemanticKernel(string model, string? promptDirectory = null)
     {
         var builder = Kernel.CreateBuilder();
-        var openAiApiKey = _semanticKernelFactoryOptions.ApiKey;
+        var aiApiKey = _semanticKernelFactoryOptions.ApiKey;
+        var apiEndpoint = _semanticKernelFactoryOptions.ApiEndpoint;
 
         builder.Services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Debug).AddSimpleConsole());
 
-        var localApiEndpoint = _semanticKernelFactoryOptions.ApiEndpoint;
-        if (localApiEndpoint is null)
-        {
-            builder.Services
-                .AddOpenAIChatCompletion(model, apiKey: openAiApiKey)
-                .AddOpenAIAudioToText(modelId: "whisper-1", apiKey: openAiApiKey);
-        }
-        else
-        {
-            builder.Services
-                .AddOpenAIChatCompletion(model, endpoint: localApiEndpoint, apiKey: openAiApiKey);
-        }
+        var client = apiEndpoint is null
+            ? new OpenAIClient(new ApiKeyCredential(aiApiKey))
+            : new OpenAIClient(new ApiKeyCredential(aiApiKey), new OpenAIClientOptions { Endpoint = apiEndpoint });
+
+        builder.Services
+            .AddOpenAIChatCompletion(model, client);
 
         var kernel = builder.Build();
         if (promptDirectory is not null)
