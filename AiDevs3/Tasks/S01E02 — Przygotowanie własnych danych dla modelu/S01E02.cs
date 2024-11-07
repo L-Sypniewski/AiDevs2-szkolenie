@@ -78,7 +78,7 @@ public class S01E02 : Lesson
             """";
         var userPrompt = $"What is the answer to this question: {question}";
 
-        var answer = await semanticKernelClient.ExecutePrompt("Phi-3.5-MoE-instruct", SystemPrompt, userPrompt);
+        var answer = await semanticKernelClient.ExecutePrompt("Phi-3.5-MoE-instruct", SystemPrompt, userPrompt, 500);
         logger.LogInformation("Received answer from LLM: {Answer}", answer);
 
         return answer;

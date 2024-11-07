@@ -10,11 +10,12 @@ public class SemanticKernelClient
     public SemanticKernelClient(SemanticKernelFactory semanticKernelFactory) => _kernelFactory = semanticKernelFactory;
 
 
-    public async Task<string> ExecutePrompt(string model, string systemPrompt, string userPrompt, double temperature = 0.2)
+    public async Task<string> ExecutePrompt(string model, string systemPrompt, string userPrompt, int maxTokens, double temperature = 0.2)
     {
         var kernel = _kernelFactory.BuildSemanticKernel(model);
         var promptExecutionSettings = new OpenAIPromptExecutionSettings
         {
+            MaxTokens = maxTokens,
             Temperature = temperature
         };
         var kernelArguments = new KernelArguments(promptExecutionSettings)
