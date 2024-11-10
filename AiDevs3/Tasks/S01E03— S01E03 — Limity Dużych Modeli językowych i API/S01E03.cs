@@ -46,14 +46,11 @@ public class S01E03 : Lesson
 
     protected override Delegate GetAnswerDelegate => async () =>
     {
-        var centralaBaseUrl = Configuration.GetValue<string>("CentralaBaseUrl")!;
-        var apiKey = Configuration.GetValue<string>("AiDevsApiKey")!;
-
-        var jsonContent = await GetFile(HttpClient, centralaBaseUrl, apiKey, _logger);
+        var jsonContent = await GetFile(HttpClient, CentralaBaseUrl, ApiKey, _logger);
         var document = System.Text.Json.JsonSerializer.Deserialize<TestDocument>(jsonContent)!;
 
         var correctedDocument = await ValidateAndAnswerQuestions(document, _semanticKernelClient, _logger);
-        var documentWithApiKey = correctedDocument with { ApiKey = apiKey };
+        var documentWithApiKey = correctedDocument with { ApiKey = ApiKey };
 
         var responseContent = await SubmitResults("JSON", documentWithApiKey);
         return TypedResults.Ok(responseContent);

@@ -30,7 +30,9 @@ builder.Services.AddHttpClient("resilient-client")
         });
     });
 
-builder.RegisterModules(typeof(Program).Assembly);
+builder.Services.AddTransient<SemanticKernelClient>();
+
+builder.RegisterModules(typeof(Program).Assembly, builder.Services);
 
 var app = builder.Build();
 
@@ -43,6 +45,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapEndpoints();
+app.MapEndpoints(app.Services);
 
 app.Run();

@@ -4,47 +4,42 @@ namespace AiDevs3.DependencyInjection;
 
 public static class ModuleExtensions
 {
-    private static readonly List<IModule> s_registeredModules = new List<IModule>();
+    private static readonly List<Type> s_registeredModuleTypes = [];
 
-    /// <summary>
-    /// Registers all discovered modules with the specified service collection.
-    /// </summary>
-    /// <param name="hostApplicationBuilder">Host application builder, e.g.  <see cref="T:Microsoft.AspNetCore.Builder.WebApplicationBuilder" /></param>
-    /// <param name="assembly">The assembly to discover the modules from.</param>
-    /// <returns>The modified service collection.</returns>
-    public static IHostApplicationBuilder RegisterModules(this IHostApplicationBuilder hostApplicationBuilder, Assembly assembly)
+    public static IHostApplicationBuilder RegisterModules(this IHostApplicationBuilder hostApplicationBuilder, Assembly assembly, IServiceCollection services)
     {
-        s_registeredModules.Clear();
-        var collection = DiscoverModules(assembly);
-        foreach (var module in collection)
-            module.RegisterModule(hostApplicationBuilder);
-        s_registeredModules.AddRange(collection);
+        s_registeredModuleTypes.Clear();
+        var moduleTypes = DiscoverModules(assembly);
+        foreach (var moduleType in moduleTypes)
+        {
+            // Register each module type as scoped
+            services.AddTransient(moduleType);
+            // Also register it as its interface
+            services.AddTransient(typeof(IModule), serviceProvider => 
+                serviceProvider.GetRequiredService(moduleType));
+            s_registeredModuleTypes.Add(moduleType);
+        }
         return hostApplicationBuilder;
     }
 
-    /// <summary>
-    /// Maps the endpoints for all registered modules using the specified web application.
-    /// </summary>
-    /// <param name="app">The web application to map the endpoints with.</param>
-    /// <returns>The modified web application.</returns>
-    public static WebApplication MapEndpoints(this WebApplication app)
+    public static WebApplication MapEndpoints(this WebApplication app, IServiceProvider serviceProvider)
     {
-        foreach (var module in s_registeredModules.ToArray())
+           var moduleServices = serviceProvider.GetServices<IModule>();
+        
+        foreach (var module in moduleServices)
+        {
             module.MapEndpoints(app);
+        }
+        
         return app;
     }
 
-    /// <summary>
-    /// Discovers and returns all types that implement the IModule interface from the current assembly.
-    /// </summary>
-    /// <returns>An enumerable collection of discovered modules.</returns>
-    private static IModule[] DiscoverModules(Assembly assembly)
+    private static Type[] DiscoverModules(Assembly assembly)
     {
         var moduleType = typeof(IModule);
         return assembly.GetTypes()
             .Where(type => type.IsClass && moduleType.IsAssignableFrom(type))
             .Where(type => !type.IsAbstract)
-            .Select(type => (IModule) Activator.CreateInstance(type)!)
             .ToArray();
     }
 }

@@ -6,11 +6,15 @@ public abstract class Lesson : IModule
 {
     protected readonly IConfiguration Configuration;
     protected readonly HttpClient HttpClient;
+    protected readonly string CentralaBaseUrl;
+    protected readonly string ApiKey;
 
     protected Lesson(IConfiguration configuration, HttpClient httpClient)
     {
         Configuration = configuration;
         HttpClient = httpClient;
+        CentralaBaseUrl = Configuration.GetValue<string>("CentralaBaseUrl")!;
+        ApiKey = Configuration.GetValue<string>("AiDevsApiKey")!;
     }
 
     protected abstract string LessonName { get; }
@@ -34,11 +38,8 @@ public abstract class Lesson : IModule
 
     protected async Task<string> SubmitResults(string taskName, object answer)
     {
-        var centralaBaseUrl = Configuration.GetValue<string>("CentralaBaseUrl")!;
-        var apiKey = Configuration.GetValue<string>("AiDevsApiKey")!;
-
-        var payload = new { task = taskName, apikey = apiKey, answer = answer };
-        var response = await HttpClient.PostAsJsonAsync($"{centralaBaseUrl}/report", payload);
+        var payload = new { task = taskName, apikey = ApiKey, answer = answer };
+        var response = await HttpClient.PostAsJsonAsync($"{CentralaBaseUrl}/report", payload);
         return await response.Content.ReadAsStringAsync();
     }
 }
