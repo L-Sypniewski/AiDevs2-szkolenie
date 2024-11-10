@@ -1,28 +1,36 @@
-using AiDevs3.SemanticKernel;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
+using AiDevs3.SemanticKernel;
 
 namespace AiDevs3.Tasks.S01E01___Interakcja_z_dużym_modelem_językowym;
 
 public class S01E01 : Lesson
 {
+    private readonly SemanticKernelClient _semanticKernelClient;
+    private readonly ILogger<S01E01> _logger;
+
+    public S01E01(
+        IConfiguration configuration,
+        HttpClient httpClient,
+        SemanticKernelClient semanticKernelClient,
+        ILogger<S01E01> logger) : base(configuration, httpClient)
+    {
+        _semanticKernelClient = semanticKernelClient;
+        _logger = logger;
+    }
+
     private const string Username = "tester";
     protected override string LessonName => "Interakcja z dużym modelem językowym";
 
-    protected override Delegate GetAnswerDelegate => async (
-        [FromServices] HttpClient httpClient,
-        [FromServices] SemanticKernelClient semanticKernelClient,
-        [FromServices] ILogger<S01E01> logger,
-        [FromServices] IConfiguration configuration) =>
+    protected override Delegate GetAnswerDelegate => async () =>
     {
-        var baseUrl = configuration.GetValue<string>("AgentsUrl")!;
-        var password = configuration.GetValue<string>("S01E01_Password")!;
+        var baseUrl = Configuration.GetValue<string>("AgentsUrl")!;
+        var password = Configuration.GetValue<string>("S01E01_Password")!;
 
-        var questionResult = await GetQuestionFromServer(httpClient, baseUrl, logger);
-        var answerResult = await GetAnswerFromLlm(semanticKernelClient, questionResult, logger);
-        var submissionResult = await SubmitAnswerToServer(httpClient, baseUrl, Username, password, answerResult, logger);
+        var questionResult = await GetQuestionFromServer(HttpClient, baseUrl, _logger);
+        var answerResult = await GetAnswerFromLlm(_semanticKernelClient, questionResult, _logger);
+        var submissionResult = await SubmitAnswerToServer(HttpClient, baseUrl, Username, password, answerResult, _logger);
         var downloadUrl = ExtractDownloadUrl(submissionResult, baseUrl);
-        var finalContent = await GetFinalContent(httpClient, downloadUrl, logger);
+        var finalContent = await GetFinalContent(HttpClient, downloadUrl, _logger);
 
         return TypedResults.Ok(finalContent);
     };

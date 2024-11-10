@@ -1,11 +1,23 @@
 using System.Text.Json.Serialization;
 using AiDevs3.SemanticKernel;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AiDevs3.Tasks.S01E03__S01E03___Limity_Dużych_Modeli_językowych_i_API;
 
 public class S01E03 : Lesson
 {
+    private readonly SemanticKernelClient _semanticKernelClient;
+    private readonly ILogger<S01E03> _logger;
+
+    public S01E03(
+        IConfiguration configuration,
+        HttpClient httpClient,
+        SemanticKernelClient semanticKernelClient,
+        ILogger<S01E03> logger) : base(configuration, httpClient)
+    {
+        _semanticKernelClient = semanticKernelClient;
+        _logger = logger;
+    }
+
     protected override string LessonName => "S01E03 — Limity Dużych Modeli językowych i API";
 
     public record TestQuestion(
@@ -32,25 +44,18 @@ public class S01E03 : Lesson
         [property: JsonPropertyName("test-data")]
         IReadOnlyList<TestDataItem> TestData);
 
-    protected override Delegate GetAnswerDelegate => async (
-        [FromServices] HttpClient httpClient,
-        [FromServices] SemanticKernelClient semanticKernelClient,
-        [FromServices] ILogger<S01E03> logger,
-        [FromServices] IConfiguration configuration) =>
+    protected override Delegate GetAnswerDelegate => async () =>
     {
-        var centralaBaseUrl = configuration.GetValue<string>("CentralaBaseUrl")!;
-        var apiKey = configuration.GetValue<string>("AiDevsApiKey")!;
+        var centralaBaseUrl = Configuration.GetValue<string>("CentralaBaseUrl")!;
+        var apiKey = Configuration.GetValue<string>("AiDevsApiKey")!;
 
-        var jsonContent = await GetFile(httpClient, centralaBaseUrl, apiKey, logger);
+        var jsonContent = await GetFile(HttpClient, centralaBaseUrl, apiKey, _logger);
         var document = System.Text.Json.JsonSerializer.Deserialize<TestDocument>(jsonContent)!;
 
-        var correctedDocument = await ValidateAndAnswerQuestions(document, semanticKernelClient, logger);
+        var correctedDocument = await ValidateAndAnswerQuestions(document, _semanticKernelClient, _logger);
         var documentWithApiKey = correctedDocument with { ApiKey = apiKey };
-        var answer = new { task = "JSON", apikey = apiKey, answer = documentWithApiKey };
 
-
-        var response = await httpClient.PostAsJsonAsync($"{centralaBaseUrl}/report ", answer);
-        var responseContent = response.Content.ReadAsStringAsync();
+        var responseContent = await SubmitResults("JSON", documentWithApiKey);
         return TypedResults.Ok(responseContent);
     };
 

@@ -1,4 +1,4 @@
-﻿using AiDevs3.DependencyInjection;
+using AiDevs3.DependencyInjection;
 using AiDevs3.SemanticKernel;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;

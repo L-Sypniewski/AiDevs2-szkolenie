@@ -1,11 +1,23 @@
 using System.Text.Json.Serialization;
 using AiDevs3.SemanticKernel;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AiDevs3.Tasks.S01E02___Przygotowanie_własnych_danych_dla_modelu;
 
 public class S01E02 : Lesson
 {
+    private readonly SemanticKernelClient _semanticKernelClient;
+    private readonly ILogger<S01E02> _logger;
+
+    public S01E02(
+        IConfiguration configuration,
+        HttpClient httpClient,
+        SemanticKernelClient semanticKernelClient,
+        ILogger<S01E02> logger) : base(configuration, httpClient)
+    {
+        _semanticKernelClient = semanticKernelClient;
+        _logger = logger;
+    }
+
     protected override string LessonName => "Przygotowanie własnych danych dla modelu";
 
     private record Message(
@@ -14,17 +26,13 @@ public class S01E02 : Lesson
         [property: JsonPropertyName("msgID")]
         int MessageId);
 
-    protected override Delegate GetAnswerDelegate => async (
-        [FromServices] HttpClient httpClient,
-        [FromServices] SemanticKernelClient semanticKernelClient,
-        [FromServices] ILogger<S01E02> logger,
-        [FromServices] IConfiguration configuration) =>
+    protected override Delegate GetAnswerDelegate => async () =>
     {
-        var verificationUrl = $"{configuration.GetValue<string>("AiDevsBaseUrl")}/verify";
+        var verificationUrl = $"{Configuration.GetValue<string>("AiDevsBaseUrl")}/verify";
 
-        var verificationQuestion = await GetQuestionFromServer(httpClient, verificationUrl, logger);
-        var answerResult = await GetAnswerFromLlm(semanticKernelClient, verificationQuestion.Text, logger);
-        var submissionResult = await SubmitAnswerToServer(httpClient, verificationUrl, new Message(answerResult, verificationQuestion.MessageId), logger);
+        var verificationQuestion = await GetQuestionFromServer(HttpClient, verificationUrl, _logger);
+        var answerResult = await GetAnswerFromLlm(_semanticKernelClient, verificationQuestion.Text, _logger);
+        var submissionResult = await SubmitAnswerToServer(HttpClient, verificationUrl, new Message(answerResult, verificationQuestion.MessageId), _logger);
 
         return TypedResults.Ok(submissionResult);
     };
