@@ -73,7 +73,7 @@ public class S01E01 : Lesson
             "You are a knowledgeable assistant specializing in historical dates. Always respond with only the number, without any additional text or formatting.";
         var userPrompt = $"What is the answer to this question: {question}";
 
-        var answer = await semanticKernelClient.ExecutePrompt("Phi-3.5-mini-instruct", SystemPrompt, userPrompt, 500);
+        var answer = await semanticKernelClient.ExecutePrompt("Phi-3.5-mini-instruct", AiProvider.GithubModels, SystemPrompt, userPrompt, 500);
         logger.LogInformation("Received answer from LLM: {Answer}", answer);
 
         return ParseAnswer(answer);

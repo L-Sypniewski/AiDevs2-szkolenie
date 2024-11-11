@@ -57,7 +57,7 @@ public class S01E05 : Lesson
                                     You will be provided with a text that includes PII data of Polish citizens.
                                     Your task is to substitute each piece of PII data (name + surname, street name + number, city and person's age) with the word 'CENZURA.'
                                     </objective>
-                                    
+
                                     <prompt_rules>
                                     - Identify the following types of PII in the sentence: name and surname, street name and number, city, and age.
                                     - street name and number should be treated as one element. For example 'ulica Modra 3' should be substituted as 'ulica CENZURA'
@@ -69,25 +69,25 @@ public class S01E05 : Lesson
                                     - You must NOT change grammar or punctuation, e.g. "31 lat" -> "CENZURA lat" NOT "CENZURA lata"
                                     - You must keep the rest of the text unchanged no matter what.
                                     </prompt_rules>
-                                    
+
                                     <prompt_examples>
                                     USER: Dane osoby podejrzanej: Marta Kowalska Zamieszkała w Warszawie na ulicy Modrej 3. Ma 58 lat.
                                     AI: Dane osoby podejrzanej: CENZURA. Zamieszkały w CENZURA na ulicy CENZURA. Ma CENZURA lat.
-                                    
+
                                     USER: Informacje o podejrzanym:  Janusz Kowalski. Mieszka w Sopocie przy ulicy Broniewskiego 132. Wiek: 62 lata.
                                     AI: Informacje o podejrzanym: CENZURA. Mieszka w CENZURA przy ulicy CENZURA. Wiek: CENZURA lata.
                                     </prompt_examples>
-                                    
+
                                     <dynamic_context>
                                     This prompt is intended to handle PII data for Polish citizens, substituting the specified personal data elements with "CENZURA" while leaving the rest of the sentence intact.
                                     </dynamic_context>
-                                    
+
                                     <execution_validation>
                                     - Ensure that only the specified PII data is replaced with "CENZURA"
                                     - Verify that all other elements of the sentence remain unchanged.
                                     - Confirm that no partial replacements or omissions occur.
                                     </execution_validation>
-                                    
+
                                     <output_structure>
                                     You must treat street name and number as one element and substitute them as one, e.g "ul. Piękna 5" -> "ul. CENZURA"
                                     You must NOT change grammar or punctuation, e.g. "31 lat" -> "CENZURA lat" NOT "CENZURA lata"
@@ -97,6 +97,7 @@ public class S01E05 : Lesson
 
         var censoredText = await semanticKernelClient.ExecutePrompt(
             "Phi-3.5-MoE-instruct",
+            AiProvider.GithubModels,
             SystemPrompt,
             data,
             maxTokens: 500,
