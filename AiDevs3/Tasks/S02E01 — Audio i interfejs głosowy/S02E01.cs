@@ -135,7 +135,6 @@ public class S02E01 : Lesson
 
         var analysis = await _semanticKernelClient.ExecutePrompt(
             "gpt-4o-2024-08-06",
-            AiProvider.OpenAI,
             TestimonyAnalysisSystemPrompt,
             combinedTestimonies,
             maxTokens: 3000,

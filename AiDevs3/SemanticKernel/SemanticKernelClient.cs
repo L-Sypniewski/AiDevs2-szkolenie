@@ -1,6 +1,7 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.AudioToText;
+using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace AiDevs3.SemanticKernel;
 
@@ -12,19 +13,20 @@ public class SemanticKernelClient
 
     public async Task<string> ExecutePrompt(
         string model,
-        AiProvider aiProvider,
         string? systemPrompt,
         string userPrompt,
         int maxTokens,
-        double temperature = 0.2)
+        double temperature = 0.2,
+        object? responseFormat = null)
     {
         var kernel = _kernelFactory.BuildSemanticKernel();
         var promptExecutionSettings = new OpenAIPromptExecutionSettings
         {
             ModelId = model,
-            ServiceId = aiProvider.ToString(),
+            ServiceId = model,
             MaxTokens = maxTokens,
-            Temperature = temperature
+            Temperature = temperature,
+            ResponseFormat = responseFormat
         };
         var kernelArguments = new KernelArguments(promptExecutionSettings)
         {
@@ -40,6 +42,53 @@ public class SemanticKernelClient
         // TODO: Measure prompt cache hit rate: https://platform.openai.com/docs/guides/prompt-caching
         //TODO: Optimizing LLMs for accuracy: https://platform.openai.com/docs/guides/optimizing-llm-accuracy
         return (await kernel.InvokePromptAsync<string>(prompt, kernelArguments))!;
+    }
+
+    public async Task<string> ExecuteVisionPrompt(
+        string model,
+        string? systemPrompt,
+        string userPrompt,
+        IReadOnlyCollection<ReadOnlyMemory<byte>> imageData,
+        int maxTokens,
+        double temperature = 0.2)
+    {
+        var kernel = _kernelFactory.BuildSemanticKernel();
+        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>(serviceKey: model);
+
+        var chatHistory = new ChatHistory();
+        if (!string.IsNullOrEmpty(systemPrompt))
+        {
+            chatHistory.AddSystemMessage(systemPrompt);
+        }
+
+        var messageContent = new ChatMessageContentItemCollection
+        {
+            new TextContent(userPrompt)
+        };
+
+        foreach (var imageBytes in imageData)
+        {
+            messageContent.Add(new ImageContent(imageBytes, "image/png"));
+        }
+
+        chatHistory.AddUserMessage(messageContent);
+
+        var result = await chatCompletionService.GetChatMessageContentAsync(
+            chatHistory,
+            new OpenAIPromptExecutionSettings
+            {
+                ModelId = model,
+                ServiceId = model,
+                MaxTokens = maxTokens,
+                Temperature = temperature
+            });
+
+        if (result.Content is null)
+        {
+            throw new InvalidOperationException("Chat completion failed");
+        }
+
+        return result.Content;
     }
 
     public async Task<string> TranscribeAudioAsync(
