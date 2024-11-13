@@ -10,39 +10,55 @@ namespace AiDevs3.SemanticKernel;
 
 public class SemanticKernelFactory
 {
-    private enum AiProvider
+    public enum AiProvider
     {
         OpenAI,
         GithubModels
     }
 
-    private readonly SemanticKernelFactoryOptions _semanticKernelFactoryOptions;
+    public static string CreateServiceId(string modelId, AiProvider aiProvider) =>
+        $"{modelId}-{aiProvider}";
 
     public SemanticKernelFactory(IOptions<SemanticKernelFactoryOptions> options) => _semanticKernelFactoryOptions = options.Value;
+
+    private readonly SemanticKernelFactoryOptions _semanticKernelFactoryOptions;
+
+    private static class ModelConfigurations
+    {
+        public static readonly HashSet<(string ModelId, AiProvider Provider)> Models =
+        [
+            ("gpt-4o-2024-08-06", AiProvider.OpenAI),
+            ("gpt-4o-mini-2024-07-18", AiProvider.OpenAI),
+            ("gpt-4-turbo-2024-04-09", AiProvider.OpenAI),
+            ("o1-mini-2024-09-12", AiProvider.OpenAI),
+            ("o1-preview-2024-09-12", AiProvider.OpenAI),
+            ("gpt-4o", AiProvider.GithubModels),
+            ("gpt-4o-mini", AiProvider.GithubModels),
+            ("o1-mini", AiProvider.GithubModels),
+            ("o1-preview", AiProvider.GithubModels),
+            ("Phi-3.5-mini-instruct", AiProvider.GithubModels),
+            ("Phi-3.5-MoE-instruct", AiProvider.GithubModels),
+            ("Phi-3.5-vision-instruct", AiProvider.GithubModels),
+        ];
+    }
 
     public Kernel BuildSemanticKernel(string? promptDirectory = null)
     {
         var builder = Kernel.CreateBuilder();
-
         builder.Services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Debug).AddSimpleConsole());
 
         var openAiClient = CreateOpenAIClient(AiProvider.OpenAI);
         var githubModelsClient = CreateOpenAIClient(AiProvider.GithubModels);
 
+        foreach (var (modelId, provider) in ModelConfigurations.Models)
+        {
+            var client = provider == AiProvider.OpenAI ? openAiClient : githubModelsClient;
+            RegisterModel(builder.Services, modelId, provider, client);
+        }
+
         builder.Services
-            .AddOpenAIChatCompletion(modelId: "gpt-4o-2024-08-06", openAiClient, serviceId: "gpt-4o-2024-08-06")
-            .AddOpenAIChatCompletion(modelId: "gpt-4o-mini-2024-07-18", openAiClient, serviceId: "gpt-4o-mini-2024-07-18")
-            .AddOpenAIChatCompletion(modelId: "gpt-4-turbo-2024-04-09", openAiClient, serviceId: "gpt-4-turbo-2024-04-09")
-            // .AddOpenAIChatCompletion(modelId: "o1-mini-2024-09-12", openAiClient, serviceId: "o1-mini-2024-09-12")
-            // .AddOpenAIChatCompletion(modelId: "o1-preview-2024-09-12", openAiClient, serviceId: "o1-preview-2024-09-12")
-            .AddOpenAIChatCompletion(modelId: "gpt-4o", githubModelsClient, serviceId: "gpt-4o")
-            .AddOpenAIChatCompletion(modelId: "gpt-4o-mini", githubModelsClient, serviceId: "gpt-4o-mini")
-            .AddOpenAIChatCompletion(modelId: "o1-mini", githubModelsClient, serviceId: "o1-mini")
-            .AddOpenAIChatCompletion(modelId: "o1-preview", githubModelsClient, serviceId: "o1-preview")
-            .AddOpenAIChatCompletion(modelId: "Phi-3.5-mini-instruct", githubModelsClient, serviceId: "Phi-3.5-mini-instruct")
-            .AddOpenAIChatCompletion(modelId: "Phi-3.5-MoE-instruct", githubModelsClient, serviceId: "Phi-3.5-MoE-instruct")
-            .AddOpenAIChatCompletion(modelId: "Phi-3.5-vision-instruct", githubModelsClient, serviceId: "Phi-3.5-vision-instruct")
-            .AddOpenAIAudioToText(modelId: "whisper-1", apiKey: _semanticKernelFactoryOptions.OpenAi.ApiKey);
+            .AddOpenAIAudioToText(modelId: "whisper-1", apiKey: _semanticKernelFactoryOptions.OpenAi.ApiKey, serviceId: CreateServiceId("whisper-1", AiProvider.OpenAI))
+            .AddOpenAITextToImage(modelId: "dall-e-3", apiKey: _semanticKernelFactoryOptions.OpenAi.ApiKey, serviceId: CreateServiceId("dall-e-3", AiProvider.OpenAI));
 
         var kernel = builder.Build();
         if (promptDirectory is not null)
@@ -53,17 +69,22 @@ public class SemanticKernelFactory
         return kernel;
     }
 
-    private OpenAIClient CreateOpenAIClient(AiProvider aiProvider)
+    private OpenAIClient CreateOpenAIClient(AiProvider aiProvider) => aiProvider switch
     {
-        return aiProvider switch
-        {
-            AiProvider.OpenAI => new OpenAIClient(
-                new ApiKeyCredential(_semanticKernelFactoryOptions.OpenAi.ApiKey)),
-            AiProvider.GithubModels => new OpenAIClient(
-                new ApiKeyCredential(_semanticKernelFactoryOptions.GithubModels.ApiKey),
-                new OpenAIClientOptions { Endpoint = _semanticKernelFactoryOptions.GithubModels.ApiEndpoint }),
-            _ => throw new ArgumentOutOfRangeException(nameof(aiProvider), aiProvider, "Unsupported AI provider")
-        };
+        AiProvider.OpenAI => new OpenAIClient(
+            new ApiKeyCredential(_semanticKernelFactoryOptions.OpenAi.ApiKey)),
+        AiProvider.GithubModels => new OpenAIClient(
+            new ApiKeyCredential(_semanticKernelFactoryOptions.GithubModels.ApiKey),
+            new OpenAIClientOptions { Endpoint = _semanticKernelFactoryOptions.GithubModels.ApiEndpoint }),
+        _ => throw new ArgumentOutOfRangeException(nameof(aiProvider), aiProvider, "Unsupported AI provider")
+    };
+
+    private static void RegisterModel(IServiceCollection services, string modelId, AiProvider provider, OpenAIClient client)
+    {
+        services.AddOpenAIChatCompletion(
+            modelId: modelId,
+            client,
+            serviceId: CreateServiceId(modelId, provider));
     }
 
     public virtual async Task<string> InvokePluginWithStructuredOutputAsync(

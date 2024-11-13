@@ -97,6 +97,7 @@ public class S01E05 : Lesson
 
         var censoredText = await semanticKernelClient.ExecutePrompt(
             "Phi-3.5-MoE-instruct",
+            SemanticKernelFactory.AiProvider.GithubModels, 
             SystemPrompt,
             data,
             maxTokens: 500,

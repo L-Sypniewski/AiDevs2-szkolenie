@@ -2,6 +2,8 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.AudioToText;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.TextToImage;
+using static AiDevs3.SemanticKernel.SemanticKernelFactory;
 
 namespace AiDevs3.SemanticKernel;
 
@@ -13,6 +15,7 @@ public class SemanticKernelClient
 
     public async Task<string> ExecutePrompt(
         string model,
+        AiProvider aiProvider,
         string? systemPrompt,
         string userPrompt,
         int maxTokens,
@@ -23,7 +26,7 @@ public class SemanticKernelClient
         var promptExecutionSettings = new OpenAIPromptExecutionSettings
         {
             ModelId = model,
-            ServiceId = model,
+            ServiceId = SemanticKernelFactory.CreateServiceId(model, aiProvider),
             MaxTokens = maxTokens,
             Temperature = temperature,
             ResponseFormat = responseFormat
@@ -46,6 +49,7 @@ public class SemanticKernelClient
 
     public async Task<string> ExecuteVisionPrompt(
         string model,
+        AiProvider aiProvider,
         string? systemPrompt,
         string userPrompt,
         IReadOnlyCollection<ReadOnlyMemory<byte>> imageData,
@@ -53,7 +57,7 @@ public class SemanticKernelClient
         double temperature = 0.2)
     {
         var kernel = _kernelFactory.BuildSemanticKernel();
-        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>(serviceKey: model);
+        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>(serviceKey: SemanticKernelFactory.CreateServiceId(model, aiProvider));
 
         var chatHistory = new ChatHistory();
         if (!string.IsNullOrEmpty(systemPrompt))
@@ -93,6 +97,7 @@ public class SemanticKernelClient
 
     public async Task<string> TranscribeAudioAsync(
         string model,
+        AiProvider aiProvider,
         string filename,
         Stream audioStream,
         string language = "pl",
@@ -100,11 +105,12 @@ public class SemanticKernelClient
         float temperature = 0.0f)
     {
         var kernel = _kernelFactory.BuildSemanticKernel();
-        var audioToTextService = kernel.GetRequiredService<IAudioToTextService>();
+        var audioToTextService = kernel.GetRequiredService<IAudioToTextService>(serviceKey: SemanticKernelFactory.CreateServiceId(model, aiProvider));
 
         var executionSettings = new OpenAIAudioToTextExecutionSettings(filename)
         {
             Language = language,
+            ServiceId = model,
             Prompt = prompt,
             ResponseFormat = "json",
             Temperature = temperature
@@ -121,5 +127,47 @@ public class SemanticKernelClient
         }
 
         return result.Text;
+    }
+
+    public enum DallE3ImageSize
+    {
+        Square1024 = 0,      // 1024x1024
+        Landscape1792 = 1,   // 1792x1024
+        Portrait1792 = 2     // 1024x1792
+    }
+
+    public enum DallE3Quality
+    {
+        Standard,
+        HD
+    }
+
+    public async Task<string> ExecuteDalle3ImagePrompt(
+        string prompt,
+        DallE3ImageSize size,
+        DallE3Quality quality)
+    {
+        const string Dalle3Model = "dall-e-3";
+
+        var kernel = _kernelFactory.BuildSemanticKernel();
+        var textToImageService = kernel.GetRequiredService<ITextToImageService>(serviceKey: SemanticKernelFactory.CreateServiceId(Dalle3Model, AiProvider.OpenAI));
+
+        var executionSettings = new OpenAITextToImageExecutionSettings
+        {
+            ModelId = Dalle3Model,
+            ServiceId = Dalle3Model,
+            Size = GetImageDimensions(size),
+            Quality = quality == DallE3Quality.Standard ? "standard" : "hd"
+        };
+
+        return (await textToImageService.GetImageContentsAsync(new TextContent(prompt), executionSettings))[0].Uri!.ToString();
+
+        static (int Width, int Height) GetImageDimensions(DallE3ImageSize size) => size switch
+        {
+            DallE3ImageSize.Square1024 => (1024, 1024),
+            DallE3ImageSize.Landscape1792 => (1792, 1024),
+            DallE3ImageSize.Portrait1792 => (1024, 1792),
+            _ => throw new ArgumentOutOfRangeException(nameof(size))
+        };
     }
 }

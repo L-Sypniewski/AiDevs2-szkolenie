@@ -101,6 +101,7 @@ public class S02E01 : Lesson
                 await using var audioStream = File.OpenRead(audioFile);
                 var transcription = await _semanticKernelClient.TranscribeAudioAsync(
                     "whisper-1",
+                    SemanticKernelFactory.AiProvider.OpenAI,
                     Path.GetFileName(audioFile),
                     audioStream,
                     language: "pl");
@@ -135,6 +136,7 @@ public class S02E01 : Lesson
 
         var analysis = await _semanticKernelClient.ExecutePrompt(
             "gpt-4o-2024-08-06",
+            SemanticKernelFactory.AiProvider.OpenAI,
             TestimonyAnalysisSystemPrompt,
             combinedTestimonies,
             maxTokens: 3000,

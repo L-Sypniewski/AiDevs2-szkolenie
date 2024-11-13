@@ -104,7 +104,7 @@ public class S01E03 : Lesson
                                     Provide ONLY the direct answer without any explanations or additional text
                                     """;
 
-        var answer = await semanticKernelClient.ExecutePrompt("Phi-3.5-MoE-instruct", SystemPrompt, $"Question: {question}", maxTokens: 50, temperature: 0.0);
+        var answer = await semanticKernelClient.ExecutePrompt("Phi-3.5-MoE-instruct",SemanticKernelFactory.AiProvider.GithubModels, SystemPrompt, $"Question: {question}", maxTokens: 50, temperature: 0.0);
         logger.LogInformation("AI provided answer: {Answer}", answer);
         return answer.Trim();
     }
