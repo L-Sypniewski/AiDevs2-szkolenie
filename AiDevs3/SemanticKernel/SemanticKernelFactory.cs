@@ -5,6 +5,8 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using OpenAI;
 using OpenAI.Chat;
+using Microsoft.Extensions.Http.Resilience;
+using System.Net;
 
 namespace AiDevs3.SemanticKernel;
 
@@ -16,8 +18,7 @@ public class SemanticKernelFactory
         GithubModels
     }
 
-    public static string CreateServiceId(string modelId, AiProvider aiProvider) =>
-        $"{modelId}-{aiProvider}";
+    public static string CreateServiceId(string modelId, AiProvider aiProvider) => $"{modelId}-{aiProvider}";
 
     public SemanticKernelFactory(IOptions<SemanticKernelFactoryOptions> options) => _semanticKernelFactoryOptions = options.Value;
 
@@ -45,10 +46,41 @@ public class SemanticKernelFactory
     public Kernel BuildSemanticKernel(string? promptDirectory = null)
     {
         var builder = Kernel.CreateBuilder();
+
+        builder.Services.ConfigureHttpClientDefaults(c =>
+        {
+            c.AddStandardResilienceHandler()
+                .Configure((o, sp) =>
+                {
+                    // Configure retry policy
+                    o.Retry.MaxRetryAttempts = 3;
+                    o.Retry.Delay = TimeSpan.FromSeconds(5);
+                    o.Retry.UseJitter = true;
+                    o.Retry.OnRetry = (onRetryArgs) =>
+                    {
+                        var logger = sp.GetRequiredService<ILogger<HttpClient>>();
+                        logger.LogWarning("Retrying request. Retry count: {RetryCount}, exception mesage: {Exception}", onRetryArgs.AttemptNumber,
+                            onRetryArgs.Outcome.Exception?.Message);
+                        return ValueTask.CompletedTask;
+                    };
+
+                    o.Retry.ShouldHandle = args =>
+                    {
+                        var isRetryableStatus = args.Outcome.Result?.StatusCode is
+                            HttpStatusCode.TooManyRequests;
+
+                        var isTimeout = args.Outcome.Exception?.InnerException is TaskCanceledException;
+                        var isRateLimit = args.Outcome.Exception?.Message?.Contains("RateLimitReached") ?? false;
+
+                        return ValueTask.FromResult(isRetryableStatus || isTimeout || isRateLimit);
+                    };
+                });
+        });
+
         builder.Services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Debug).AddSimpleConsole());
 
-        var openAiClient = CreateOpenAIClient(AiProvider.OpenAI);
-        var githubModelsClient = CreateOpenAIClient(AiProvider.GithubModels);
+        var openAiClient = CreateOpenAiClient(AiProvider.OpenAI);
+        var githubModelsClient = CreateOpenAiClient(AiProvider.GithubModels);
 
         foreach (var (modelId, provider) in ModelConfigurations.Models)
         {
@@ -57,8 +89,10 @@ public class SemanticKernelFactory
         }
 
         builder.Services
-            .AddOpenAIAudioToText(modelId: "whisper-1", apiKey: _semanticKernelFactoryOptions.OpenAi.ApiKey, serviceId: CreateServiceId("whisper-1", AiProvider.OpenAI))
-            .AddOpenAITextToImage(modelId: "dall-e-3", apiKey: _semanticKernelFactoryOptions.OpenAi.ApiKey, serviceId: CreateServiceId("dall-e-3", AiProvider.OpenAI));
+            .AddOpenAIAudioToText(modelId: "whisper-1", apiKey: _semanticKernelFactoryOptions.OpenAi.ApiKey,
+                serviceId: CreateServiceId("whisper-1", AiProvider.OpenAI))
+            .AddOpenAITextToImage(modelId: "dall-e-3", apiKey: _semanticKernelFactoryOptions.OpenAi.ApiKey,
+                serviceId: CreateServiceId("dall-e-3", AiProvider.OpenAI));
 
         var kernel = builder.Build();
         if (promptDirectory is not null)
@@ -69,15 +103,16 @@ public class SemanticKernelFactory
         return kernel;
     }
 
-    private OpenAIClient CreateOpenAIClient(AiProvider aiProvider) => aiProvider switch
-    {
-        AiProvider.OpenAI => new OpenAIClient(
-            new ApiKeyCredential(_semanticKernelFactoryOptions.OpenAi.ApiKey)),
-        AiProvider.GithubModels => new OpenAIClient(
-            new ApiKeyCredential(_semanticKernelFactoryOptions.GithubModels.ApiKey),
-            new OpenAIClientOptions { Endpoint = _semanticKernelFactoryOptions.GithubModels.ApiEndpoint }),
-        _ => throw new ArgumentOutOfRangeException(nameof(aiProvider), aiProvider, "Unsupported AI provider")
-    };
+    private OpenAIClient CreateOpenAiClient(AiProvider aiProvider) =>
+        aiProvider switch
+        {
+            AiProvider.OpenAI => new OpenAIClient(
+                new ApiKeyCredential(_semanticKernelFactoryOptions.OpenAi.ApiKey)),
+            AiProvider.GithubModels => new OpenAIClient(
+                new ApiKeyCredential(_semanticKernelFactoryOptions.GithubModels.ApiKey),
+                new OpenAIClientOptions { Endpoint = _semanticKernelFactoryOptions.GithubModels.ApiEndpoint }),
+            _ => throw new ArgumentOutOfRangeException(nameof(aiProvider), aiProvider, "Unsupported AI provider")
+        };
 
     private static void RegisterModel(IServiceCollection services, string modelId, AiProvider provider, OpenAIClient client)
     {

@@ -13,6 +13,16 @@ public class SemanticKernelClient
 
     public SemanticKernelClient(SemanticKernelFactory semanticKernelFactory) => _kernelFactory = semanticKernelFactory;
 
+    private static (int? MaxTokens, Dictionary<string, object> ExtensionData) GetMaxTokens(int maxTokens, AiProvider aiProvider)
+    {
+        if (aiProvider == AiProvider.GithubModels)
+        {
+            return (MaxTokens: null, new Dictionary<string, object>() { ["max_completion_tokens"] = maxTokens });
+        }
+
+        return (MaxTokens: maxTokens, ExtensionData: []);
+    }
+
     public async Task<string> ExecutePrompt(
         string model,
         AiProvider aiProvider,
@@ -20,14 +30,18 @@ public class SemanticKernelClient
         string userPrompt,
         int maxTokens,
         double temperature = 0.2,
-        object? responseFormat = null)
+        object? responseFormat = null,
+        CancellationToken cancellationToken = default)
     {
         var kernel = _kernelFactory.BuildSemanticKernel();
+
+        var maxTokensData = GetMaxTokens(maxTokens, aiProvider);
         var promptExecutionSettings = new OpenAIPromptExecutionSettings
         {
             ModelId = model,
             ServiceId = SemanticKernelFactory.CreateServiceId(model, aiProvider),
-            MaxTokens = maxTokens,
+            MaxTokens = maxTokensData.MaxTokens,
+            ExtensionData = maxTokensData.ExtensionData,
             Temperature = temperature,
             ResponseFormat = responseFormat
         };
@@ -44,7 +58,7 @@ public class SemanticKernelClient
 
         // TODO: Measure prompt cache hit rate: https://platform.openai.com/docs/guides/prompt-caching
         //TODO: Optimizing LLMs for accuracy: https://platform.openai.com/docs/guides/optimizing-llm-accuracy
-        return (await kernel.InvokePromptAsync<string>(prompt, kernelArguments))!;
+        return (await kernel.InvokePromptAsync<string>(prompt, kernelArguments, cancellationToken: cancellationToken))!;
     }
 
     public async Task<string> ExecuteVisionPrompt(
@@ -54,7 +68,9 @@ public class SemanticKernelClient
         string userPrompt,
         IReadOnlyCollection<ReadOnlyMemory<byte>> imageData,
         int maxTokens,
-        double temperature = 0.2)
+        object? responseFormat = null,
+        double temperature = 0.2,
+        CancellationToken cancellationToken = default)
     {
         var kernel = _kernelFactory.BuildSemanticKernel();
         var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>(serviceKey: SemanticKernelFactory.CreateServiceId(model, aiProvider));
@@ -77,15 +93,19 @@ public class SemanticKernelClient
 
         chatHistory.AddUserMessage(messageContent);
 
+        var maxTokensData = GetMaxTokens(maxTokens, aiProvider);
         var result = await chatCompletionService.GetChatMessageContentAsync(
             chatHistory,
             new OpenAIPromptExecutionSettings
             {
                 ModelId = model,
                 ServiceId = model,
-                MaxTokens = maxTokens,
-                Temperature = temperature
-            });
+                MaxTokens = maxTokensData.MaxTokens,
+                ExtensionData = maxTokensData.ExtensionData,
+                Temperature = temperature,
+                ResponseFormat = responseFormat
+            },
+            cancellationToken: cancellationToken);
 
         if (result.Content is null)
         {
@@ -102,7 +122,8 @@ public class SemanticKernelClient
         Stream audioStream,
         string language = "pl",
         string? prompt = null,
-        float temperature = 0.0f)
+        float temperature = 0.0f,
+        CancellationToken cancellationToken = default)
     {
         var kernel = _kernelFactory.BuildSemanticKernel();
         var audioToTextService = kernel.GetRequiredService<IAudioToTextService>(serviceKey: SemanticKernelFactory.CreateServiceId(model, aiProvider));
@@ -117,10 +138,10 @@ public class SemanticKernelClient
         };
 
         var audioContent = new AudioContent(
-            await BinaryData.FromStreamAsync(audioStream),
+            await BinaryData.FromStreamAsync(audioStream, cancellationToken),
             mimeType: null);
 
-        var result = await audioToTextService.GetTextContentAsync(audioContent, executionSettings);
+        var result = await audioToTextService.GetTextContentAsync(audioContent, executionSettings, cancellationToken: cancellationToken);
         if (result.Text is null)
         {
             throw new InvalidOperationException($"Audio transcription failed for file {filename}");
@@ -145,7 +166,8 @@ public class SemanticKernelClient
     public async Task<string> ExecuteDalle3ImagePrompt(
         string prompt,
         DallE3ImageSize size,
-        DallE3Quality quality)
+        DallE3Quality quality,
+        CancellationToken cancellationToken = default)
     {
         const string Dalle3Model = "dall-e-3";
 
@@ -160,7 +182,7 @@ public class SemanticKernelClient
             Quality = quality == DallE3Quality.Standard ? "standard" : "hd"
         };
 
-        return (await textToImageService.GetImageContentsAsync(new TextContent(prompt), executionSettings))[0].Uri!.ToString();
+        return (await textToImageService.GetImageContentsAsync(new TextContent(prompt), executionSettings, cancellationToken: cancellationToken))[0].Uri!.ToString();
 
         static (int Width, int Height) GetImageDimensions(DallE3ImageSize size) => size switch
         {
