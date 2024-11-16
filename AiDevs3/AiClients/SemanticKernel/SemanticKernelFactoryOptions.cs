@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace AiDevs3.SemanticKernel;
+namespace AiDevs3.AiClients.SemanticKernel;
 
-public record SemanticKernelFactoryOptions
+public record AiOptions
 {
-    public const string ConfigName = "SemanticKernelFactory";
+    public const string ConfigName = "Ai";
     public AiProviderSettings OpenAi { get; init; } = null!;
     public AiProviderSettings GithubModels { get; init; } = null!;
 

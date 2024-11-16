@@ -1,4 +1,5 @@
-using AiDevs3.SemanticKernel;
+using AiDevs3.AiClients;
+using AiDevs3.AiClients.SemanticKernel;
 
 namespace AiDevs3.Tasks.S01E05___Produkcja;
 
@@ -96,8 +97,7 @@ public class S01E05 : Lesson
                                     """;
 
         var censoredText = await semanticKernelClient.ExecutePrompt(
-            "Phi-3.5-MoE-instruct",
-            SemanticKernelFactory.AiProvider.GithubModels, 
+            ModelConfiguration.Phi35_MoE_Instruct,
             SystemPrompt,
             data,
             maxTokens: 500,

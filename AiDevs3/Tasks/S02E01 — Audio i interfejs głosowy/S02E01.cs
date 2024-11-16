@@ -1,5 +1,6 @@
 using System.IO.Compression;
-using AiDevs3.SemanticKernel;
+using AiDevs3.AiClients;
+using AiDevs3.AiClients.SemanticKernel;
 
 namespace AiDevs3.Tasks.S02E01___Audio_i_interfejs_głosowy;
 
@@ -100,8 +101,7 @@ public class S02E01 : Lesson
                 logger.LogInformation("Creating new transcription for file: {AudioFile}", audioFile);
                 await using var audioStream = File.OpenRead(audioFile);
                 var transcription = await _semanticKernelClient.TranscribeAudioAsync(
-                    "whisper-1",
-                    SemanticKernelFactory.AiProvider.OpenAI,
+                    ModelConfiguration.Whisper1,
                     Path.GetFileName(audioFile),
                     audioStream,
                     language: "pl");
@@ -135,8 +135,7 @@ public class S02E01 : Lesson
         logger.LogInformation("Combined testimonies with XML tags and witness names");
 
         var analysis = await _semanticKernelClient.ExecutePrompt(
-            "gpt-4o-2024-08-06",
-            SemanticKernelFactory.AiProvider.OpenAI,
+            ModelConfiguration.Gpt4o_202408,
             TestimonyAnalysisSystemPrompt,
             combinedTestimonies,
             maxTokens: 3000,

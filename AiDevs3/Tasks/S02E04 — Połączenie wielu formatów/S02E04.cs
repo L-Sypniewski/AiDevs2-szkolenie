@@ -1,7 +1,8 @@
 using System.IO.Compression;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AiDevs3.SemanticKernel;
+using AiDevs3.AiClients;
+using AiDevs3.AiClients.SemanticKernel;
 
 namespace AiDevs3.Tasks.S02E04___Połączenie_wielu_formatów;
 
@@ -26,8 +27,7 @@ public class S02E04 : Lesson
         [property: JsonPropertyName("people")]
         List<string> People,
         [property: JsonPropertyName("hardware")]
-        List<string> Hardware
-    );
+        List<string> Hardware);
 
     protected override Delegate GetAnswerDelegate => async () =>
     {
@@ -74,46 +74,46 @@ public class S02E04 : Lesson
     }
 
     private const string ClassificationPrompt = """
-    <objective>
-    Analyze the given text and classify it into a structured JSON response.
-    Focus only on:
-    - Confirmed presence of people or clear evidence of current human activity
-    - Hardware repairs and physical machine issues (ignore software-related issues)
-    </objective>
+                                                <objective>
+                                                Analyze the given text and classify it into a structured JSON response.
+                                                Focus only on:
+                                                - Confirmed presence of people or clear evidence of current human activity
+                                                - Hardware repairs and physical machine issues (ignore software-related issues)
+                                                </objective>
 
-    <rules>
-    - Return ONLY valid JSON format
-    - Include exactly two fields: "thinking_process" and "answer"
-    - For machines, only consider hardware/physical issues, not software
-    - For people classification, ONLY include:
-        * Confirmed sightings or evidence of recent presence of people that are going to be searched for in order to be detained or already have been detained or captured 
-        * Captured or detained individuals
-    - DO NOT classify as "people" if:
-        * People were not found
-        * Location is abandoned
-        * Only mentions searching without results
-        * Historical or past presence only
-        * People are mentioned in a non-relevant context, e.g. food delivery
-    - "thinking_process" must explain the classification reasoning
-    - "answer" must be exactly one of: "people", "machines", or "none"
-    - No markdown formatting or additional text
-    - Maintain clean, parseable JSON structure
-    </rules>
+                                                <rules>
+                                                - Return ONLY valid JSON format
+                                                - Include exactly two fields: "thinking_process" and "answer"
+                                                - For machines, only consider hardware/physical issues, not software
+                                                - For people classification, ONLY include:
+                                                    * Confirmed sightings or evidence of recent presence of people that are going to be searched for in order to be detained or already have been detained or captured 
+                                                    * Captured or detained individuals
+                                                - DO NOT classify as "people" if:
+                                                    * People were not found
+                                                    * Location is abandoned
+                                                    * Only mentions searching without results
+                                                    * Historical or past presence only
+                                                    * People are mentioned in a non-relevant context, e.g. food delivery
+                                                - "thinking_process" must explain the classification reasoning
+                                                - "answer" must be exactly one of: "people", "machines", or "none"
+                                                - No markdown formatting or additional text
+                                                - Maintain clean, parseable JSON structure
+                                                </rules>
 
-    <answer_format>
-    {
-        "thinking_process": "Brief explanation of classification logic",
-        "answer": "category"
-    }
-    </answer_format>
+                                                <answer_format>
+                                                {
+                                                    "thinking_process": "Brief explanation of classification logic",
+                                                    "answer": "category"
+                                                }
+                                                </answer_format>
 
-    <validation>
-    - Verify JSON is properly formatted
-    - Confirm answer is one of three allowed values
-    - Ensure thinking process explains classification
-    - Double-check that "people" classification only applies to confirmed presence
-    </validation>
-    """;
+                                                <validation>
+                                                - Verify JSON is properly formatted
+                                                - Confirm answer is one of three allowed values
+                                                - Ensure thinking process explains classification
+                                                - Double-check that "people" classification only applies to confirmed presence
+                                                </validation>
+                                                """;
 
     private async Task<string> DownloadZipFile()
     {
@@ -199,8 +199,7 @@ public class S02E04 : Lesson
         {
             var content = await File.ReadAllTextAsync(path);
             var jsonResponse = await semanticKernelClient.ExecutePrompt(
-                "gpt-4o-mini-2024-07-18",
-                SemanticKernelFactory.AiProvider.OpenAI,
+                ModelConfiguration.Gpt4o_Mini_202407,
                 ClassificationPrompt,
                 content,
                 responseFormat: "json_object",
@@ -227,12 +226,11 @@ public class S02E04 : Lesson
         {
             await using var fileStream = File.OpenRead(path);
             var imageBytes = new byte[fileStream.Length];
-            await fileStream.ReadAsync(imageBytes);
+            await fileStream.ReadExactlyAsync(imageBytes);
             var images = new List<ReadOnlyMemory<byte>> { imageBytes };
 
             var jsonResponse = await semanticKernelClient.ExecuteVisionPrompt(
-                "gpt-4o-mini-2024-07-18",
-                SemanticKernelFactory.AiProvider.OpenAI,
+                ModelConfiguration.Gpt4o_Mini_202407,
                 ClassificationPrompt,
                 "Analyze this image:",
                 images,
@@ -260,25 +258,29 @@ public class S02E04 : Lesson
         {
             await using var audioStream = File.OpenRead(path);
             var transcription = await semanticKernelClient.TranscribeAudioAsync(
-                "whisper-1",
-                SemanticKernelFactory.AiProvider.OpenAI,
+                ModelConfiguration.Whisper1,
                 Path.GetFileName(path),
                 audioStream,
-                language: "en",
-                prompt: ClassificationPrompt,
-                temperature: 0.0f);
+                language:
+                "en",
+                prompt:
+                ClassificationPrompt,
+                temperature:
+                0.0f);
 
             _logger.LogInformation("Audio transcription for file {FileName}: {Transcription}",
                 Path.GetFileName(path), transcription);
 
             var jsonResponse = await semanticKernelClient.ExecutePrompt(
-                "gpt-4o-mini-2024-07-18",
-                SemanticKernelFactory.AiProvider.OpenAI,
+                ModelConfiguration.Gpt4o_Mini_202407,
                 ClassificationPrompt,
                 transcription,
-                responseFormat: "json_object",
-                maxTokens: 500,
-                temperature: 0.0);
+                responseFormat:
+                "json_object",
+                maxTokens:
+                500,
+                temperature:
+                0.0);
 
             _logger.LogInformation("AI Response for audio file {FileName}: {Response}",
                 Path.GetFileName(path), jsonResponse);

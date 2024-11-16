@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
-using AiDevs3.SemanticKernel;
+using AiDevs3.AiClients;
+using AiDevs3.AiClients.SemanticKernel;
 
 namespace AiDevs3.Tasks.S01E02___Przygotowanie_własnych_danych_dla_modelu;
 
@@ -18,7 +19,7 @@ public class S01E02 : Lesson
         _logger = logger;
     }
 
-    protected override string LessonName => "Przygotowanie własnych danych dla modelu";
+    protected override string LessonName => "S01E02 — Przygotowanie własnych danych dla modelu";
 
     private record Message(
         [property: JsonPropertyName("text")]
@@ -86,7 +87,7 @@ public class S01E02 : Lesson
             """";
         var userPrompt = $"What is the answer to this question: {question}";
 
-        var answer = await semanticKernelClient.ExecutePrompt("Phi-3.5-MoE-instruct", SemanticKernelFactory.AiProvider.GithubModels, SystemPrompt, userPrompt,
+        var answer = await semanticKernelClient.ExecutePrompt(ModelConfiguration.Phi35_MoE_Instruct, SystemPrompt, userPrompt,
             500);
         logger.LogInformation("Received answer from LLM: {Answer}", answer);
 

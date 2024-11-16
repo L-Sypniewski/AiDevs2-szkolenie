@@ -1,4 +1,4 @@
-using AiDevs3.SemanticKernel;
+using AiDevs3.AiClients.SemanticKernel;
 
 namespace AiDevs3.Tasks.S02E03___Generowanie_i_modyfikacja_obrazów;
 

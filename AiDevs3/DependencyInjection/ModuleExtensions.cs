@@ -15,7 +15,7 @@ public static class ModuleExtensions
             // Register each module type as scoped
             services.AddTransient(moduleType);
             // Also register it as its interface
-            services.AddTransient(typeof(IModule), serviceProvider => 
+            services.AddTransient(typeof(IModule), serviceProvider =>
                 serviceProvider.GetRequiredService(moduleType));
             s_registeredModuleTypes.Add(moduleType);
         }
@@ -24,13 +24,13 @@ public static class ModuleExtensions
 
     public static WebApplication MapEndpoints(this WebApplication app, IServiceProvider serviceProvider)
     {
-           var moduleServices = serviceProvider.GetServices<IModule>();
-        
+        var moduleServices = serviceProvider.GetServices<IModule>();
+
         foreach (var module in moduleServices)
         {
             module.MapEndpoints(app);
         }
-        
+
         return app;
     }
 

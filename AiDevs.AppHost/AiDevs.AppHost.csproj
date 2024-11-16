@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>63c0ca95-46fd-4e16-9be4-3da99bc591a4</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+    <PackageReference Include="Aspire.Hosting.Qdrant" Version="9.0.0" />
+    <PackageReference Include="Aspire.Qdrant.Client" Version="9.0.0" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Ollama" Version="9.0.1-beta.77" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AiDevs3\AiDevs3.csproj" />
+  </ItemGroup>
+
+</Project>

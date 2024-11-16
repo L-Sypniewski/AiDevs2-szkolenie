@@ -1,5 +1,6 @@
 using System.Text.Json;
-using AiDevs3.SemanticKernel;
+using AiDevs3.AiClients;
+using AiDevs3.AiClients.SemanticKernel;
 
 namespace AiDevs3.Tasks.S02E02___Rozumienie_obrazu_i_wideo;
 
@@ -64,8 +65,7 @@ public class S02E02 : Lesson
     {
         var imageData = new ReadOnlyMemory<byte>(imageBytes);
         return await _semanticKernelClient.ExecuteVisionPrompt(
-            model: "gpt-4o-2024-08-06",
-            SemanticKernelFactory.AiProvider.OpenAI,
+            ModelConfiguration.Gpt4o_202408,
             systemPrompt:
             "You are an expert at analyzing modern Polish maps. List street names road numbers and landmarks from the map fragment that could help identify the city. Think outloud and describe each found element in detail. Do not focus on the most famouse places for a given city, look at the bigger picture. Use cross-referencing these street names with cities in Poland.",
             userPrompt:
@@ -79,8 +79,7 @@ public class S02E02 : Lesson
         var descriptions = string.Join("\n\n", analyses.Select((x, i) => $"Map Fragment {i + 1}:\n{x.Description}"));
 
         var jsonResponse = await _semanticKernelClient.ExecutePrompt(
-            model: "gpt-4o-2024-08-06",
-            SemanticKernelFactory.AiProvider.OpenAI,
+            ModelConfiguration.Gpt4o_202408,
             systemPrompt: """
                           You are an expert at analyzing historical maps and identifying cities.
                           Use cross-referencing these street names with cities in Poland.

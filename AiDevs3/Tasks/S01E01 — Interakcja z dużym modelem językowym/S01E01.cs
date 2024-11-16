@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
-using AiDevs3.SemanticKernel;
+using AiDevs3.AiClients;
+using AiDevs3.AiClients.SemanticKernel;
 
 namespace AiDevs3.Tasks.S01E01___Interakcja_z_dużym_modelem_językowym;
 
@@ -19,7 +20,7 @@ public class S01E01 : Lesson
     }
 
     private const string Username = "tester";
-    protected override string LessonName => "Interakcja z dużym modelem językowym";
+    protected override string LessonName => "S01E01 — Interakcja z dużym modelem językowym";
 
     protected override Delegate GetAnswerDelegate => async () =>
     {
@@ -73,7 +74,7 @@ public class S01E01 : Lesson
             "You are a knowledgeable assistant specializing in historical dates. Always respond with only the number, without any additional text or formatting.";
         var userPrompt = $"What is the answer to this question: {question}";
 
-        var answer = await semanticKernelClient.ExecutePrompt("Phi-3.5-mini-instruct", SemanticKernelFactory.AiProvider.GithubModels, SystemPrompt, userPrompt,
+        var answer = await semanticKernelClient.ExecutePrompt(ModelConfiguration.Phi35_Mini_Instruct, SystemPrompt, userPrompt,
             500);
         logger.LogInformation("Received answer from LLM: {Answer}", answer);
 
