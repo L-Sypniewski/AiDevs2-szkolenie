@@ -31,4 +31,10 @@
     <ProjectReference Include="..\AiDevs.ServiceDefaults\AiDevs.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Tasks\S03E02 — Wyszukiwanie Semantyczne\weapons_tests\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

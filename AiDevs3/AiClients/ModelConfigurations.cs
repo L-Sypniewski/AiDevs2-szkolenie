@@ -3,7 +3,8 @@ namespace AiDevs3.AiClients;
 public enum AiProvider
 {
     OpenAI,
-    GithubModels
+    GithubModels,
+    Ollama
 }
 
 public enum ModelConfiguration
@@ -21,7 +22,9 @@ public enum ModelConfiguration
     Phi35_Mini_Instruct,
     Phi35_MoE_Instruct,
     Phi35_Vision_Instruct,
-    Dalle3
+    Dalle3,
+    TextEmbedding3Large,
+    OllamaEmbeddings
 }
 
 public static class ModelConfigurations
@@ -41,7 +44,9 @@ public static class ModelConfigurations
         { ModelConfiguration.Phi35_Mini_Instruct, ("Phi-3.5-mini-instruct", AiProvider.GithubModels) },
         { ModelConfiguration.Phi35_MoE_Instruct, ("Phi-3.5-MoE-instruct", AiProvider.GithubModels) },
         { ModelConfiguration.Phi35_Vision_Instruct, ("Phi-3.5-vision-instruct", AiProvider.GithubModels) },
-        { ModelConfiguration.Dalle3, ("dall-e-3", AiProvider.OpenAI) }
+        { ModelConfiguration.Dalle3, ("dall-e-3", AiProvider.OpenAI) },
+        { ModelConfiguration.TextEmbedding3Large, ("text-embedding-3-large", AiProvider.OpenAI) },
+        { ModelConfiguration.OllamaEmbeddings, ("ollama-embeddings", AiProvider.Ollama) }
     };
 
     public static string GetModelId(this ModelConfiguration config) => s_modelMappings[config].ModelId;

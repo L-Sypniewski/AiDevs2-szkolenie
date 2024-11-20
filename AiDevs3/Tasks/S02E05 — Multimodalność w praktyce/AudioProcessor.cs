@@ -20,6 +20,7 @@ public class AudioProcessor
         SemanticKernelClient semanticKernelClient,
         ILogger<AudioProcessor> logger,
         IVectorStore vectorStore,
+        [FromKeyedServices(ModelConfiguration.TextEmbedding3Large)]
         ITextEmbeddingGenerationService textEmbeddingGeneration)
     {
         _httpClient = httpClient;

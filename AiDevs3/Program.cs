@@ -2,6 +2,7 @@ using AiDevs3.AiClients;
 using AiDevs3.AiClients.SemanticKernel;
 using AiDevs3.DependencyInjection;
 using AiDevs3.Tasks.S02E05___Multimodalność_w_praktyce;
+using AiDevs3.Tasks.S03E02___Wyszukiwanie_Semantyczne;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.SemanticKernel;
 using Polly;
@@ -16,6 +17,7 @@ builder.Services.AddOpenApi();
 builder.AddQdrantClient("qdrant");
 builder.Services.AddQdrantVectorStore();
 builder.Services.AddQdrantVectorStoreRecordCollection<Guid, ArticleRag>(ArticleRag.CollectionName);
+builder.Services.AddQdrantVectorStoreRecordCollection<Guid, WeaponsTestsRag>(WeaponsTestsRag.CollectionName);
 
 // Add OllamaSharp
 builder.AddOllamaSharpEmbeddingGenerator("ollama-embeddings");
@@ -23,6 +25,7 @@ builder.AddOllamaSharpEmbeddingGenerator("ollama-embeddings");
 builder.Services.AddAiClients(builder.Configuration);
 
 builder.Services.AddS02E05Dependencies();
+builder.Services.AddS03E02Dependencies();
 
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient("resilient-client")

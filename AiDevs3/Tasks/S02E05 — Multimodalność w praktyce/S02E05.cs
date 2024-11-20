@@ -32,6 +32,7 @@ public class S02E05 : Lesson
         AudioProcessor audioProcessor,
         TextProcessor textProcessor,
         ILogger<S02E05> logger,
+        [FromKeyedServices(ModelConfiguration.TextEmbedding3Large)]
         ITextEmbeddingGenerationService textEmbeddingGeneration) : base(configuration, httpClient)
     {
         _semanticKernelClient = semanticKernelClient;

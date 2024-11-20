@@ -28,6 +28,7 @@ public class ImageProcessor
         SemanticKernelClient semanticKernelClient,
         ILogger<ImageProcessor> logger,
         IVectorStore vectorStore,
+        [FromKeyedServices(ModelConfiguration.TextEmbedding3Large)]
         ITextEmbeddingGenerationService textEmbeddingGeneration)
     {
         _httpClient = httpClient;

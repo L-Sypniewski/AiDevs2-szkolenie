@@ -40,10 +40,23 @@ public static class AddAiClientsExtensions
             .AddOpenAITextToImage(modelId: ModelConfiguration.Dalle3.GetModelId(), apiKey: semanticKernelFactoryOptions.OpenAi.ApiKey,
                 serviceId: ModelConfiguration.Dalle3.CreateServiceId());
 
-        services.AddSingleton<ITextEmbeddingGenerationService>(serviceProvider =>
+        services.AddKeyedSingleton<ITextEmbeddingGenerationService>(ModelConfiguration.TextEmbedding3Large, (serviceProvider, _) =>
         {
             var apiClient = new OpenAIEmbeddingGenerator(openAiClient, "text-embedding-3-large");
-            // var apiClient = serviceProvider.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
+            var embeddingGeneratorBuilder = new EmbeddingGeneratorBuilder<string, Embedding<float>>();
+
+            var logger = serviceProvider.GetService<ILoggerFactory>()?.CreateLogger(apiClient.GetType());
+            if (logger is not null)
+            {
+                embeddingGeneratorBuilder.UseLogging(logger);
+            }
+
+            return embeddingGeneratorBuilder.Use(apiClient).AsTextEmbeddingGenerationService(serviceProvider);
+        });
+
+        services.AddKeyedSingleton<ITextEmbeddingGenerationService>(ModelConfiguration.OllamaEmbeddings, (serviceProvider, _) =>
+        {
+            var apiClient = serviceProvider.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
             var embeddingGeneratorBuilder = new EmbeddingGeneratorBuilder<string, Embedding<float>>();
 
             var logger = serviceProvider.GetService<ILoggerFactory>()?.CreateLogger(apiClient.GetType());

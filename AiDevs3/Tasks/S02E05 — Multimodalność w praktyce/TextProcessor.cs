@@ -18,6 +18,7 @@ public class TextProcessor
         SemanticKernelClient semanticKernelClient,
         ILogger<TextProcessor> logger,
         IVectorStore vectorStore,
+        [FromKeyedServices(ModelConfiguration.TextEmbedding3Large)]
         ITextEmbeddingGenerationService textEmbeddingGeneration)
     {
         _semanticKernelClient = semanticKernelClient;
