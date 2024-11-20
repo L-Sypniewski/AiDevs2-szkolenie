@@ -7,7 +7,7 @@ public static class S02E05Extensions
         services.AddTransient<ImageProcessor>();
         services.AddTransient<AudioProcessor>();
         services.AddTransient<TextProcessor>();
-        
+
         return services;
     }
 }
