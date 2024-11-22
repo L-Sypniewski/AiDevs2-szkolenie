@@ -44,7 +44,7 @@ public class CustomDateTimeConverter : JsonConverter<DateTime?>
             return null;
         }
 
-        if (!reader.TryGetDateTime(out DateTime value))
+        if (!reader.TryGetDateTime(out var value))
         {
             value = DateTime.Parse(reader.GetString()!);
         }

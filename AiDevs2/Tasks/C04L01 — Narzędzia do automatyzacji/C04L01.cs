@@ -84,7 +84,7 @@ public class C04L01 : Lesson
 
     private static async Task<string> ExecuteFunctionCall(Kernel kernel, OpenAIFunctionToolCall openAiFunctionToolCall)
     {
-        kernel.Plugins.TryGetFunctionAndArguments(openAiFunctionToolCall, out KernelFunction? pluginFunction, out KernelArguments? arguments);
+        kernel.Plugins.TryGetFunctionAndArguments(openAiFunctionToolCall, out var pluginFunction, out var arguments);
         var functionResult = await kernel.InvokeAsync(pluginFunction!, arguments!);
         return functionResult.GetValue<object>()?.ToString()!;
     }

@@ -35,7 +35,7 @@ public class OpenAiClient
         var responseString = await response.Content.ReadAsStringAsync();
         var moderationResponse =
             JsonSerializer.Deserialize<ModerationResponse>(responseString, new JsonSerializerOptions
-                { PropertyNameCaseInsensitive = true })!;
+            { PropertyNameCaseInsensitive = true })!;
 
         return moderationResponse.Results[0].Flagged;
     }

@@ -82,7 +82,7 @@ public class C04L05Answer : Lesson
         var question = body["question"]!.GetValue<string>();
         var kernel = BuildSemanticKernel(configuration);
         var memory = BuildMemory(configuration, loggerFactory);
-        
+
         logger.LogWarning("Question: {Question}", question);
 
 

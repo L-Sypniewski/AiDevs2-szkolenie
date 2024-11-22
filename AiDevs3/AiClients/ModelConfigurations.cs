@@ -24,7 +24,8 @@ public enum ModelConfiguration
     Phi35_Vision_Instruct,
     Dalle3,
     TextEmbedding3Large,
-    OllamaEmbeddings
+    OllamaEmbeddings,
+    OllamaPhi
 }
 
 public static class ModelConfigurations
@@ -46,11 +47,11 @@ public static class ModelConfigurations
         { ModelConfiguration.Phi35_Vision_Instruct, ("Phi-3.5-vision-instruct", AiProvider.GithubModels) },
         { ModelConfiguration.Dalle3, ("dall-e-3", AiProvider.OpenAI) },
         { ModelConfiguration.TextEmbedding3Large, ("text-embedding-3-large", AiProvider.OpenAI) },
-        { ModelConfiguration.OllamaEmbeddings, ("ollama-embeddings", AiProvider.Ollama) }
+        { ModelConfiguration.OllamaEmbeddings, ("ollama-embeddings", AiProvider.Ollama) },
+        { ModelConfiguration.OllamaPhi, ("ollama-phi", AiProvider.Ollama) }
     };
 
     public static string GetModelId(this ModelConfiguration config) => s_modelMappings[config].ModelId;
     public static AiProvider GetProvider(this ModelConfiguration config) => s_modelMappings[config].Provider;
     public static string CreateServiceId(this ModelConfiguration config) => $"{config.GetModelId()}-{config.GetProvider()}";
-    public static bool IsValidConfiguration(string modelId, AiProvider provider) => s_modelMappings.Values.Contains((modelId, provider));
 }

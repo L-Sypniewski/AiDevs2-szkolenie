@@ -1,6 +1,7 @@
 using System.ClientModel;
 using System.Net;
 using AiDevs3.AiClients.SemanticKernel;
+using AiDevs3.Tasks.S03E03___Wyszukiwanie_hybrydowe;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.SemanticKernel;
@@ -69,6 +70,7 @@ public static class AddAiClientsExtensions
         });
 
         services.AddTransient<AiExtensionsChatClient>();
+        services.AddSingleton<S03E03DatabasePlugin>();
 
         services.AddKernel();
         return services;

@@ -13,7 +13,7 @@ public class TimeCalculationPlugin
     {
         return DateTimeOffset.Now.AddDays(offset);
     }
-    
+
     [KernelFunction, Description("Get the current date in dd-MM-yyyy format")]
     public string Date() =>
         // Example: Sunday, 12 January, 2025

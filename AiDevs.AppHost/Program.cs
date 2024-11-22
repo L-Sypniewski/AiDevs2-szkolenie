@@ -11,9 +11,11 @@ var ollama = builder.AddOllama("ollama")
     .WithDataVolume();
 
 var embeddingModel = ollama.WithOtlpExporter().AddModel("ollama-embeddings", "mxbai-embed-large");
+var phiModel = ollama.WithOtlpExporter().AddModel("ollama-phi", "phi3:mini"); 
 
 builder.AddProject<Projects.AiDevs3>("AiDevs3")
     .WithReference(qdrant)
-    .WithReference(embeddingModel);
+    .WithReference(embeddingModel)
+    .WithReference(phiModel);
 
 builder.Build().Run();
