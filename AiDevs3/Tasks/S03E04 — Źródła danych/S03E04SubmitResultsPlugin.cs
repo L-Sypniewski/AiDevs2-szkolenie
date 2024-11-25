@@ -1,17 +1,16 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Microsoft.SemanticKernel;
 
 namespace AiDevs3.Tasks.S03E04___Źródła_danych;
 
-public class SubmitResultsPlugin
+public class S03E04SubmitResultsPlugin
 {
     private readonly string _centralaBaseUrl;
     private readonly string _apiKey;
     private readonly HttpClient _httpClient;
     private readonly ILogger _logger;
 
-    public SubmitResultsPlugin(string centralaBaseUrl, string apiKey, HttpClient httpClient, ILogger logger)
+    public S03E04SubmitResultsPlugin(string centralaBaseUrl, string apiKey, HttpClient httpClient, ILogger logger)
     {
         _centralaBaseUrl = centralaBaseUrl;
         _apiKey = apiKey;

@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Qdrant.Client" Version="9.0.0" />
-    <PackageReference Include="CommunityToolkit.Aspire.OllamaSharp" Version="9.0.1-beta.77" />
+    <PackageReference Include="CommunityToolkit.Aspire.OllamaSharp" Version="9.0.1-beta.84" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.AI" Version="9.0.0-preview.9.24556.5" />
@@ -19,11 +19,13 @@
     <PackageReference Include="Microsoft.ML.Tokenizers" Version="1.0.0" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.30.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.30.0-alpha" />
-    <PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.29.0-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.30.0-alpha" />
     <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.30.0" />
-    <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.29.0-preview" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.30.0-preview" />
     <PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.30.0-alpha" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.0.0" />
+    <PackageReference Include="NorthernNerds.Aspire.Hosting.Neo4j" Version="2.0.0" />
+    <PackageReference Include="NorthernNerds.Aspire.Neo4j" Version="2.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.1.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
   </ItemGroup>

@@ -40,7 +40,7 @@ public class S03E04 : Lesson
 
         var kernel = _kernel.Clone();
         kernel.Plugins.AddFromObject(_searchPlugin);
-        kernel.Plugins.AddFromObject(new SubmitResultsPlugin(CentralaBaseUrl, ApiKey, HttpClient, _logger));
+        kernel.Plugins.AddFromObject(new S03E04SubmitResultsPlugin(CentralaBaseUrl, ApiKey, HttpClient, _logger));
 
         var searchAgent = SearchAgent.Create(kernel, _loggerFactory);
         var reasoningAgent = ReasoningAgent.Create(kernel, _loggerFactory);
@@ -75,7 +75,7 @@ public class S03E04 : Lesson
                """,
             safeParameterNames: "history");
 
-        var chat = new AgentGroupChat(new[] { searchAgent, reasoningAgent, submissionAgent })
+        var chat = new AgentGroupChat([searchAgent, reasoningAgent, submissionAgent])
         {
             LoggerFactory = _loggerFactory,
             ExecutionSettings = new AgentGroupChatSettings
@@ -99,7 +99,7 @@ public class S03E04 : Lesson
             }
         };
 
-        const string systemPrompt = """
+        const string SystemPrompt = """
                                     You always keep the latest search history from search agent in the context.
                                     It is defined like this:
                                     "Completed searches: [JSON array of objects, e.g. 
@@ -110,7 +110,7 @@ public class S03E04 : Lesson
                                      }
                                     ]"
                                     """;
-        var systemMessage = new ChatMessageContent(AuthorRole.User, systemPrompt);
+        var systemMessage = new ChatMessageContent(AuthorRole.User, SystemPrompt);
         var initialUserContent = new ChatMessageContent(AuthorRole.User, $"Initial data about Barbara:\n{dataAboutBarbara}");
         chat.AddChatMessages([systemMessage, initialUserContent]);
 
