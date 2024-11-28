@@ -1,12 +1,12 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using AiDevs3.AiClients;
+using AiDevs3.Tasks.S03E04___Źródła_danych.Agents;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
 using Microsoft.SemanticKernel.Agents.Chat;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
-using AiDevs3.Tasks.S03E04___Źródła_danych.Agents;
 
 namespace AiDevs3.Tasks.S03E04___Źródła_danych;
 

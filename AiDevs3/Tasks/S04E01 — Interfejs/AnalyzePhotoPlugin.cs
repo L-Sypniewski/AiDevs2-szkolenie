@@ -117,9 +117,9 @@ public class AnalyzePhotoPlugin
 
         // if (qualityAnalysis.RecommendedAction != "photo_looks_correct_no_action_needed")
         // {
-            // _logger.LogInformation("Image quality issues detected. Recommended action: {RecommendedAction} before proceeding with analysis.",
-                // qualityAnalysis.RecommendedAction);
-            // return $"Image quality issues detected. Recommended action: {qualityAnalysis.RecommendedAction} before proceeding with analysis.";
+        // _logger.LogInformation("Image quality issues detected. Recommended action: {RecommendedAction} before proceeding with analysis.",
+        // qualityAnalysis.RecommendedAction);
+        // return $"Image quality issues detected. Recommended action: {qualityAnalysis.RecommendedAction} before proceeding with analysis.";
         // }
 
         if (!await DetectPersonInImage(imageUrl, cancellationToken))

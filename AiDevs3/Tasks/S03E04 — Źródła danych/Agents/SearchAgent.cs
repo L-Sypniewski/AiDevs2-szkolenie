@@ -61,7 +61,7 @@ public static class SearchAgent
         Kernel = kernel,
         LoggerFactory = loggerFactory,
         Arguments = new KernelArguments(new OpenAIPromptExecutionSettings
-        { 
+        {
             FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
             ServiceId = ModelConfiguration.Gpt4o_Mini_202407.CreateServiceId()
         })

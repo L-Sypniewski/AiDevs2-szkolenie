@@ -3,11 +3,11 @@ using AiDevs3.AiClients.SemanticKernel;
 using AiDevs3.DependencyInjection;
 using AiDevs3.Tasks.S02E05___Multimodalność_w_praktyce;
 using AiDevs3.Tasks.S03E02___Wyszukiwanie_Semantyczne;
+using AiDevs3.Tasks.S04E01___Interfejs;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.SemanticKernel;
 using NorthernNerds.Aspire.Neo4j;
 using Polly;
-using AiDevs3.Tasks.S04E01___Interfejs;  // Add this using statement at the top
 
 var builder = WebApplication.CreateBuilder(args);
 

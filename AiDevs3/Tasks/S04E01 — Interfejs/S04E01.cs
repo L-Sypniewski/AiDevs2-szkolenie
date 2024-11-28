@@ -74,15 +74,15 @@ public class S04E01 : Lesson
                                       Use Polish language
                                       Avoid mentioning temporary features like clothing unless they appear consistently across photos.
                                       """;
-        
+
         var finalDescription = await _semanticKernelClient.ExecutePrompt(
             ModelConfiguration.Gpt4o_Mini_202407,
             null,
             finalDescriptionPrompt,
             maxTokens: 1000);
-        
+
         _logger.LogInformation("Generated final description: {Description}", finalDescription);
-        
+
         var response = await SubmitResults("photos", finalDescription);
         return TypedResults.Json(response);
     };
