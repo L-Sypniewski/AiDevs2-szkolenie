@@ -7,6 +7,7 @@ using Microsoft.Extensions.Http.Resilience;
 using Microsoft.SemanticKernel;
 using NorthernNerds.Aspire.Neo4j;
 using Polly;
+using AiDevs3.Tasks.S04E01___Interfejs;  // Add this using statement at the top
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,11 @@ builder.Services.AddHttpClient("resilient-client")
     });
 
 builder.Services.AddTransient<SemanticKernelClient>();
+
+// Add these two lines to register the filters
+builder.Services.AddSingleton<IFunctionInvocationFilter, MyFunctionFilter>();
+builder.Services.AddSingleton<IPromptRenderFilter, MyPromptFilter>();
+builder.Services.AddSingleton<IAutoFunctionInvocationFilter, FunctionInvocationFilter>();
 
 builder.RegisterModules(typeof(Program).Assembly, builder.Services);
 
