@@ -25,7 +25,8 @@ public enum ModelConfiguration
     Dalle3,
     TextEmbedding3Large,
     OllamaEmbeddings,
-    OllamaPhi
+    OllamaPhi,
+    FineTunedS04E02
 }
 
 public static class ModelConfigurations
@@ -48,7 +49,8 @@ public static class ModelConfigurations
         { ModelConfiguration.Dalle3, ("dall-e-3", AiProvider.OpenAI) },
         { ModelConfiguration.TextEmbedding3Large, ("text-embedding-3-large", AiProvider.OpenAI) },
         { ModelConfiguration.OllamaEmbeddings, ("ollama-embeddings", AiProvider.Ollama) },
-        { ModelConfiguration.OllamaPhi, ("ollama-phi", AiProvider.Ollama) }
+        { ModelConfiguration.OllamaPhi, ("ollama-phi", AiProvider.Ollama) },
+        { ModelConfiguration.FineTunedS04E02, ("ft:gpt-4o-mini-2024-07-18:personal:s04e02-2:AZ523kB7", AiProvider.OpenAI) }
     };
 
     public static string GetModelId(this ModelConfiguration config) => s_modelMappings[config].ModelId;
