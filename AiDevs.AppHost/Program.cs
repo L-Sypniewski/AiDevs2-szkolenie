@@ -20,6 +20,7 @@ var neo4jDb = builder.AddNeo4j("graph-db", neo4jUser: neo4jUser)
     .WithLifetime(ContainerLifetime.Persistent);
 
 builder.AddProject<Projects.AiDevs3>("AiDevs3")
+    .WithHttpsEndpoint(targetPort: 5000, isProxied: false)
     .WithReference(qdrant)
     .WithReference(neo4jDb)
     .WithReference(embeddingModel)
