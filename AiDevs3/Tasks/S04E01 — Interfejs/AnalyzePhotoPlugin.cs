@@ -2,10 +2,9 @@ using System.ComponentModel;
 using System.Text.Json;
 using AiDevs3.AiClients;
 using AiDevs3.AiClients.SemanticKernel;
-using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 
-namespace AiDevs3.Tasks.S04E01___Interfejs.Plugins;
+namespace AiDevs3.Tasks.S04E01___Interfejs;
 
 public class AnalyzePhotoPlugin
 {
@@ -74,7 +73,7 @@ public class AnalyzePhotoPlugin
             
             You must return ONLY the JSON object with the properties described above WITHOUT any additional text or markdown formatting.
             """,
-            new[] { new ReadOnlyMemory<byte>(imageData) },
+            [new ReadOnlyMemory<byte>(imageData)],
             maxTokens: 500,
             responseFormat: new { type = "json_object" },
             cancellationToken: cancellationToken);
@@ -96,7 +95,7 @@ public class AnalyzePhotoPlugin
             ModelConfiguration.Gpt4o_Mini_202407,
             null,
             "Does this image show a clearly visible person? Respond with just 'true' or 'false'.",
-            new[] { new ReadOnlyMemory<byte>(imageData) },
+            [new ReadOnlyMemory<byte>(imageData)],
             maxTokens: 10,
             cancellationToken: cancellationToken);
 
@@ -149,7 +148,7 @@ public class AnalyzePhotoPlugin
             Use simple, clear language and avoid unnecessary details as this description is used for identification purposes.
             Output only the detailed analysis without any additional text or formatting.
             """,
-            new[] { new ReadOnlyMemory<byte>(imageData) },
+            [new ReadOnlyMemory<byte>(imageData)],
             maxTokens: 400,
             cancellationToken: cancellationToken);
 

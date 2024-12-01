@@ -101,7 +101,7 @@ public class S03E03DatabasePlugin
             temperature: LlmTemperature);
 
         _logger.LogInformation("LLM Table names extraction response: {Result}", result);
-        return result.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToArray();
+        return [.. result.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)];
     }
 
     [KernelFunction, Description("Generates and executes SQL query based on schema and requirements")]

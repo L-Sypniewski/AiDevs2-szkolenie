@@ -37,9 +37,8 @@ public static class ModuleExtensions
     private static Type[] DiscoverModules(Assembly assembly)
     {
         var moduleType = typeof(IModule);
-        return assembly.GetTypes()
+        return [.. assembly.GetTypes()
             .Where(type => type.IsClass && moduleType.IsAssignableFrom(type))
-            .Where(type => !type.IsAbstract)
-            .ToArray();
+            .Where(type => !type.IsAbstract)];
     }
 }

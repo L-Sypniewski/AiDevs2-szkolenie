@@ -17,7 +17,7 @@ public sealed class MyFunctionFilter : IFunctionInvocationFilter
 
     public async Task OnFunctionInvocationAsync(FunctionInvocationContext context, Func<FunctionInvocationContext, Task> next)
     {
-        _logger.LogInformation("Invoking {FunctionName}", context.Function.Name);
+        _logger.LogDebug("Invoking {FunctionName}", context.Function.Name);
 
         await next(context);
 
@@ -25,7 +25,7 @@ public sealed class MyFunctionFilter : IFunctionInvocationFilter
 
         if (metadata is not null && metadata.TryGetValue("Usage", out var value))
         {
-            _logger.LogInformation("Token usage: {Usage}", JsonSerializer.Serialize(value));
+            _logger.LogDebug("Token usage: {Usage}", JsonSerializer.Serialize(value));
         }
     }
 }
@@ -41,7 +41,7 @@ public class FunctionInvocationFilter : IAutoFunctionInvocationFilter
 
     public async Task OnAutoFunctionInvocationAsync(AutoFunctionInvocationContext context, Func<AutoFunctionInvocationContext, Task> next)
     {
-        _logger.LogInformation("Auto invoking function: {FunctionName} with message: {Message}",
+        _logger.LogDebug("Auto invoking function: {FunctionName} with message: {Message}",
             context.Function.Name,
             context.ChatMessageContent);
 
@@ -49,7 +49,7 @@ public class FunctionInvocationFilter : IAutoFunctionInvocationFilter
 
         if (context.Result.Metadata != null && context.Result.Metadata.TryGetValue("Usage", out var usage))
         {
-            _logger.LogInformation("Auto function usage: {Usage}", JsonSerializer.Serialize(usage));
+            _logger.LogDebug("Auto function usage: {Usage}", JsonSerializer.Serialize(usage));
         }
     }
 }
@@ -68,10 +68,10 @@ public class MyPromptFilter : IPromptRenderFilter
 
     public async Task OnPromptRenderAsync(PromptRenderContext context, Func<PromptRenderContext, Task> next)
     {
-        _logger.LogInformation("Rendering prompt for {FunctionName}", context.Function.Name);
+        _logger.LogDebug("Rendering prompt for {FunctionName}", context.Function.Name);
 
         await next(context);
 
-        _logger.LogInformation("Rendered prompt: {RenderedPrompt}", context.RenderedPrompt);
+        _logger.LogDebug("Rendered prompt: {RenderedPrompt}", context.RenderedPrompt);
     }
 }

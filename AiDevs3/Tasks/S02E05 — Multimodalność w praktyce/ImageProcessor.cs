@@ -166,7 +166,7 @@ public class ImageProcessor
             ModelConfiguration,
             ImagePrompts.PreviewImageSystemMessage,
             $"Image caption: {caption}, filename: {fileName}",
-            new[] { new ReadOnlyMemory<byte>(imageBytes) },
+            [new ReadOnlyMemory<byte>(imageBytes)],
             3000,
             responseFormat: "json_object",
             cancellationToken: cancellationToken);
@@ -182,7 +182,7 @@ public class ImageProcessor
             ModelConfiguration,
             ImagePrompts.RefineDescriptionSystemMessage,
             $"Image caption: {caption}, Context: {context}",
-            new[] { new ReadOnlyMemory<byte>(imageBytes) },
+            [new ReadOnlyMemory<byte>(imageBytes)],
             3000,
             cancellationToken: cancellationToken);
 

@@ -51,14 +51,12 @@ public class S02E04 : Lesson
         var results = await ProcessFiles(txtPaths, pngPaths, mp3Paths, _semanticKernelClient);
 
         var response = new FileClassificationResponse(
-            People: results
+            People: [.. results
                 .Where(r => r.Value == InformationType.People)
-                .Select(r => Path.GetFileName(r.Key))
-                .ToList(),
-            Hardware: results
+                .Select(r => Path.GetFileName(r.Key))],
+            Hardware: [.. results
                 .Where(r => r.Value == InformationType.Machines)
-                .Select(r => Path.GetFileName(r.Key))
-                .ToList()
+                .Select(r => Path.GetFileName(r.Key))]
         );
 
         var responseContent = await SubmitResults("kategorie", response);

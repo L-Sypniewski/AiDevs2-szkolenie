@@ -64,7 +64,7 @@ public class S02E05 : Lesson
         var questions = await GetQuestions();
 
         var questionEmbeddings =
-            await _textEmbeddingGeneration.GenerateEmbeddingsAsync(questions.Select(q => q.Text).ToList(), cancellationToken: cancellationToken);
+            await _textEmbeddingGeneration.GenerateEmbeddingsAsync([.. questions.Select(q => q.Text)], cancellationToken: cancellationToken);
         var questionWithEmbeddings = questions.Zip(questionEmbeddings, (q, e) => (Question: q, Vector: e)).ToList();
 
         var answers = await Task.WhenAll(questionWithEmbeddings.Select(async questionVectorPair =>

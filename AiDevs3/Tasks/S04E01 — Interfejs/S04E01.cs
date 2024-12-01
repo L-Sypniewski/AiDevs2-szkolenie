@@ -1,6 +1,5 @@
 using AiDevs3.AiClients;
 using AiDevs3.AiClients.SemanticKernel;
-using AiDevs3.Tasks.S04E01___Interfejs.Plugins;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
@@ -111,9 +110,7 @@ public class S04E01 : Lesson
             extractPrompt,
             maxTokens: 500);
 
-        return urlsText.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Where(url => url.StartsWith("http"))
-            .ToList();
+        return [.. urlsText.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Where(url => url.StartsWith("http"))];
     }
 
     private async Task<string> ProcessSinglePhoto(string photoUrl)

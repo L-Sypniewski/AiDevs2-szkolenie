@@ -1,26 +1,10 @@
 using System.Text.RegularExpressions;
 using Microsoft.ML.Tokenizers;
 
-namespace AiDevs3;
+namespace AiDevs3.web.TextService;
 
-public class Doc
+public class TextService : ITextService
 {
-    public required string Text { get; set; }
-    public required Metadata Metadata { get; set; }
-}
-
-public class Metadata
-{
-    public required int Tokens { get; set; }
-    public required Dictionary<string, List<string>> Headers { get; set; }
-    public required List<string> Urls { get; set; }
-    public required List<string> Images { get; set; }
-}
-
-public class TextSplitter
-{
-    private readonly Tokenizer _tokenizer;
-
     private readonly IReadOnlyDictionary<string, int> _specialTokens = new Dictionary<string, int>
     {
         ["<|im_start|>"] = 100264,
@@ -28,20 +12,17 @@ public class TextSplitter
         ["<|im_sep|>"] = 100266
     };
 
-    public TextSplitter(string modelName)
-    {
-        _tokenizer = TiktokenTokenizer.CreateForModel(modelName, extraSpecialTokens: _specialTokens);
-    }
 
-    private int CountTokens(string text)
+    private int CountTokens(string text, string modelName = "t5-small")
     {
-        if (_tokenizer == null)
+        var tokenizer = TiktokenTokenizer.CreateForModel(modelName, extraSpecialTokens: _specialTokens);
+        if (tokenizer == null)
         {
             throw new Exception("Tokenizer not initialized");
         }
 
         var formattedContent = FormatForTokenization(text);
-        var tokens = _tokenizer.EncodeToTokens(formattedContent, out _);
+        var tokens = tokenizer.EncodeToTokens(formattedContent, out _);
         return tokens.Count;
     }
 
@@ -50,10 +31,10 @@ public class TextSplitter
         return $"<|im_start|>user\n{text}<|im_end|>\n<|im_start|>assistant<|im_end|>";
     }
 
-    public Task<List<Doc>> Split(string text, int limit)
+    public Task<List<Document>> SplitAsync(string text, int limit, DocumentMetadata? metadata = null)
     {
         Console.WriteLine($"Starting split process with limit: {limit} tokens");
-        var chunks = new List<Doc>();
+        var chunks = new List<Document>();
         var position = 0;
         var totalLength = text.Length;
         var currentHeaders = new Dictionary<string, List<string>>();
@@ -70,15 +51,24 @@ public class TextSplitter
 
             var (content, urls, images) = ExtractUrlsAndImages(chunkText);
 
-            chunks.Add(new Doc
+            chunks.Add(new Document
             {
                 Text = content,
-                Metadata = new Metadata
+                Metadata = new DocumentMetadata
                 {
                     Tokens = tokens,
                     Headers = new Dictionary<string, List<string>>(currentHeaders),
                     Urls = urls,
-                    Images = images
+                    Images = images,
+                    Type = metadata?.Type ?? "text",
+                    ContentType = metadata?.ContentType ?? "chunk",
+                    Description = "",
+                    Additional = metadata?.Additional ?? [],
+                    ConversationUuid = metadata?.ConversationUuid,
+                    MimeType = metadata?.MimeType,
+                    Source = metadata?.Source ?? "",
+                    Name = metadata?.Name ?? "",
+                    Uuid = metadata?.Uuid ?? Guid.Empty
                 }
             });
 
@@ -234,20 +224,80 @@ public class TextSplitter
 
         return (content, urls, images);
     }
-}
 
-// Interface for tokenizer (implementation needed)
-public interface ITokenizer
-{
-    List<int> Encode(string text, List<string> specialTokens);
-}
-
-// Factory class for tokenizer (implementation needed)
-public static class TokenizerFactory
-{
-    public static Task<ITokenizer> CreateByModelName(string modelName, Dictionary<string, int> specialTokens)
+    public Document RestorePlaceholders(Document document)
     {
-        // Implementation needed
-        throw new NotImplementedException();
+        var text = document.Text;
+        var metadata = document.Metadata;
+
+        // Replace image placeholders with actual URLs
+        if (metadata.Images != null)
+        {
+            for (var i = 0; i < metadata.Images.Count; i++)
+            {
+                var url = metadata.Images[i];
+                var regex = new Regex($@"\!\[([^\]]*)\]\(\{{\\$img{i}\}}\)");
+                text = regex.Replace(text, m => $"![{m.Groups[1].Value}]({url})");
+            }
+        }
+
+        // Replace URL placeholders with actual URLs
+        if (metadata.Urls != null)
+        {
+            for (var i = 0; i < metadata.Urls.Count; i++)
+            {
+                var url = metadata.Urls[i];
+                var regex = new Regex($@"\[([^\]]*)\]\(\{{\\$url{i}\}}\)");
+                text = regex.Replace(text, m =>
+                {
+                    // Escape underscores in the link text
+                    var escapedText = m.Groups[1].Value.Replace("_", "\\_");
+                    return $"[{escapedText}]({url})";
+                });
+            }
+        }
+
+        return document with
+        {
+            Text = text
+        };
+    }
+
+
+
+    public Document CreateDocument(
+        string content,
+        string? modelName = null,
+        Dictionary<string, object>? metadataOverrides = null)
+    {
+        var baseMetadata = GenerateMetadata(
+            source: metadataOverrides?.GetValueOrDefault("source")?.ToString() ?? "generated",
+            name: metadataOverrides?.GetValueOrDefault("name")?.ToString() ?? "Generated Document",
+            mimeType: metadataOverrides?.GetValueOrDefault("mimeType")?.ToString() ?? "text/plain",
+            conversationUuid: metadataOverrides?.GetValueOrDefault("conversation_uuid") as Guid?,
+            additional: metadataOverrides?.GetValueOrDefault("additional") as Dictionary<string, object>
+        );
+
+        return new Document
+        {
+            Text = content,
+            Metadata = baseMetadata with { Additional = metadataOverrides ?? new() }
+        };
+    }
+    private static DocumentMetadata GenerateMetadata(
+    string source = "generated",
+    string name = "Generated Document",
+    string mimeType = "text/plain",
+    Guid? conversationUuid = null,
+    Dictionary<string, object>? additional = null)
+    {
+        return new DocumentMetadata
+        {
+            Source = source,
+            Name = name,
+            MimeType = mimeType,
+            ConversationUuid = conversationUuid,
+            Additional = additional ?? new Dictionary<string, object>()
+        };
     }
 }

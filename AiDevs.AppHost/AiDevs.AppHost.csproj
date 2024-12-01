@@ -15,16 +15,11 @@
     <PackageReference Include="Aspire.Hosting.Qdrant" Version="9.0.0" />
     <PackageReference Include="Aspire.Qdrant.Client" Version="9.0.0" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Ollama" Version="9.0.1-beta.84" />
+    <PackageReference Include="NorthernNerds.Aspire.Hosting.Neo4j" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AiDevs3\AiDevs3.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="NorthernNerds.Aspire.Hosting.Neo4j">
-      <HintPath>..\..\..\..\.nuget\packages\northernnerds.aspire.hosting.neo4j\2.0.0\lib\net9.0\NorthernNerds.Aspire.Hosting.Neo4j.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

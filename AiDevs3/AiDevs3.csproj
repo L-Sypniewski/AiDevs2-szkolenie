@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Qdrant.Client" Version="9.0.0" />
     <PackageReference Include="CommunityToolkit.Aspire.OllamaSharp" Version="9.0.1-beta.84" />
+    <PackageReference Include="Html2Markdown" Version="7.0.1.65-beta" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.AI" Version="9.0.0-preview.9.24556.5" />
@@ -38,6 +39,12 @@
     <None Update="Tasks\S03E02 — Wyszukiwanie Semantyczne\weapons_tests\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Utils\convert.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
