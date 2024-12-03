@@ -10,6 +10,7 @@ public enum AiProvider
 public enum ModelConfiguration
 {
     Gpt4o_202408 = 0,
+    Gpt4o_202411,
     Gpt4o_Mini_202407,
     Whisper1,
     Gpt4_Turbo_202404,
@@ -34,6 +35,7 @@ public static class ModelConfigurations
     private static readonly Dictionary<ModelConfiguration, (string ModelId, AiProvider Provider)> s_modelMappings = new()
     {
         { ModelConfiguration.Gpt4o_202408, ("gpt-4o-2024-08-06", AiProvider.OpenAI) },
+        { ModelConfiguration.Gpt4o_202411, ("gpt-4o-2024-11-20", AiProvider.OpenAI) },
         { ModelConfiguration.Gpt4o_Mini_202407, ("gpt-4o-mini-2024-07-18", AiProvider.OpenAI) },
         { ModelConfiguration.Whisper1, ("whisper-1", AiProvider.OpenAI) },
         { ModelConfiguration.Gpt4_Turbo_202404, ("gpt-4-turbo-2024-04-09", AiProvider.OpenAI) },

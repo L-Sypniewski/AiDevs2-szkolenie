@@ -26,6 +26,7 @@
     <PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.30.0-alpha" />
     <PackageReference Include="NorthernNerds.Aspire.Hosting.Neo4j" Version="2.0.0" />
     <PackageReference Include="NorthernNerds.Aspire.Neo4j" Version="2.0.0" />
+    <PackageReference Include="PdfPig" Version="0.1.9" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.1.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
