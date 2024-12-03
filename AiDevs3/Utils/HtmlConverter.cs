@@ -10,7 +10,7 @@ public class HtmlConverter
     public HtmlConverter(IConfiguration configuration)
     {
         _nodeScriptPath = Path.Combine(AppContext.BaseDirectory, "Utils");
-        _nodePath = configuration["NodePath"] 
+        _nodePath = configuration["NodePath"]
             ?? throw new Exception("NodePath configuration is missing");
     }
 

@@ -1,9 +1,9 @@
+using System.Text.Json;
 using AiDevs3.AiClients;
 using AiDevs3.AiClients.SemanticKernel;
 using AiDevs3.Utils;
 using AiDevs3.web.DocumentsService;
 using AiDevs3.web.TextService;
-using System.Text.Json;
 
 namespace AiDevs3.Tasks.S04E03___Zewnętrzne_źródła_danych;
 

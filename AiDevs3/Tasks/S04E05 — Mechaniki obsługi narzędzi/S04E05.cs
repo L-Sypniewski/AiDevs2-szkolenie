@@ -1,11 +1,11 @@
-using UglyToad.PdfPig;
 using System.Text;
-using UglyToad.PdfPig.DocumentLayoutAnalysis.WordExtractor;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using AiDevs3.AiClients;
 using AiDevs3.AiClients.SemanticKernel;
-using System.Text.Json;
 using Microsoft.Extensions.VectorData;
+using UglyToad.PdfPig;
+using UglyToad.PdfPig.DocumentLayoutAnalysis.WordExtractor;
 
 namespace AiDevs3.Tasks.S04E05___Mechaniki_obsługi_narzędzi;
 

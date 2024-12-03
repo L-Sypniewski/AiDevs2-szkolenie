@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using AiDevs3.AiClients;
 using AiDevs3.AiClients.SemanticKernel;
-using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 
 namespace AiDevs3.Tasks.S04E01___Interfejs;

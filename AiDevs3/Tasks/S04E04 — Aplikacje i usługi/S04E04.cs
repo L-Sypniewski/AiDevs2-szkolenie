@@ -1,7 +1,7 @@
+using System.Text.Json.Serialization;
 using AiDevs3.AiClients;
 using AiDevs3.AiClients.SemanticKernel;
 using Microsoft.AspNetCore.Http.HttpResults;
-using System.Text.Json.Serialization;
 
 namespace AiDevs3.Tasks.S04E04___Aplikacje_i_usługi;
 
