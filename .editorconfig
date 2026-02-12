@@ -4,7 +4,7 @@ root = true
 # if you want to change it, change it in all places
 
 # Code files
-[*.cs]
+[{*.cs,*.razor}]
 indent_size = 4
 insert_final_newline = true
 charset = utf-8
@@ -163,6 +163,8 @@ resharper_csharp_blank_lines_around_invocable = 1
 
 # IDE0130: Namespace "ABC" does not match folder structure,
 dotnet_diagnostic.ide0130.severity = silent
+
+dotnet_diagnostic.IDE0160.severity = silent
 
 # IDE0005, CS8019, CS8933: All related to unnecessary usings/imports
 dotnet_diagnostic.cs1591.severity = none # Disable warnings for missing XML comments
@@ -754,7 +756,7 @@ dotnet_diagnostic.rcs1085.severity = suggestion
 dotnet_diagnostic.rcs1089.severity = suggestion
 
 # Add/remove 'ConfigureAwait(false)' call
-dotnet_diagnostic.rcs1090.severity = error
+dotnet_diagnostic.rcs1090.severity = none
 # Options: roslynator_configure_await
 
 # Remove empty region
@@ -1202,3 +1204,6 @@ dotnet_diagnostic.ca1859.severity = none
 # Add/remove 'ConfigureAwait(false)' call
 dotnet_diagnostic.rcs1090.severity = none
 # Options: roslynator_configure_await
+
+# xUnit1004: Test methods must have data when using Theory/InlineData
+dotnet_diagnostic.xunit1004.severity = error
