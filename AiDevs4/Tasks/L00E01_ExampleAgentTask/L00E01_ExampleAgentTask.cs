@@ -1,4 +1,7 @@
 using AiDevs4.AiClients;
+using AiDevs4.Tools.FileReader;
+using AiDevs4.Tools.Unzipper;
+using AiDevs4.Tools.UrlFetcher;
 using Microsoft.Agents.AI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.AI;
@@ -47,6 +50,10 @@ public class L00E01_ExampleAgentTask : Lesson
         endpoints.MapGet("agent-with-tools", AgentWithToolsDelegate)
             .WithName("Agent with tools: Example Agent Task")
             .WithOpenApi();
+
+        endpoints.MapGet("file-agent", FileAgentDelegate)
+            .WithName("File agent: Example Agent Task")
+            .WithOpenApi();
     }
 
     private static Delegate AgentWithToolsDelegate => async (
@@ -89,6 +96,49 @@ public class L00E01_ExampleAgentTask : Lesson
                     };
                 }, "Calculate", "Performs a basic math calculation (add, subtract, multiply, divide)")
             ]);
+
+        var session = await agent.CreateSessionAsync(cancellationToken: cancellationToken);
+        var response = await agent.RunAsync(question, session, cancellationToken: cancellationToken);
+
+        return Results.Ok(new
+        {
+            Model = model.GetModelId(),
+            Provider = model.GetProvider().ToString(),
+            Question = question,
+            Answer = response.Text
+        });
+    };
+
+    private static Delegate FileAgentDelegate => async (
+        [FromServices] IServiceProvider serviceProvider,
+        [FromServices] HttpClient httpClient,
+        [FromQuery] string question,
+        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4o_Mini_202407,
+        CancellationToken cancellationToken = default) =>
+    {
+        var chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(model.CreateServiceId());
+        var urlFetcherTool = new UrlFetcherTool(httpClient);
+
+        var tools = new List<AITool>();
+        tools.AddRange(UnzipperTool.CreateTools());
+        tools.AddRange(FileReaderTool.CreateTools());
+        tools.AddRange(urlFetcherTool.CreateTools());
+
+        var agent = new ChatClientAgent(
+            chatClient,
+            name: "FileProcessingAgent",
+            description: "An agent that can fetch URLs, unzip archives, and read text files",
+            instructions: """
+                          You are a file processing assistant. You can:
+                          1. Fetch data from URLs
+                          2. Download files from URLs
+                          3. Extract ZIP archives
+                          4. List ZIP archive contents
+                          5. Read text files
+                          6. List directory contents
+                          Use these tools to accomplish the user's request step by step.
+                          """,
+            tools: tools);
 
         var session = await agent.CreateSessionAsync(cancellationToken: cancellationToken);
         var response = await agent.RunAsync(question, session, cancellationToken: cancellationToken);
