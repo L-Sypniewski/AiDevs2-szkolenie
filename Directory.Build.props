@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <LangVersion>12</LangVersion>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14</LangVersion>
     <NoWarn>$(NoWarn);NU1507;CA1014;CA1016;IL2026;IL2104;CA1848;CS1591;SKEXP0010;SKEXP0001;SKEXP0070;SKEXP0110</NoWarn>
   </PropertyGroup>
 </Project> 
