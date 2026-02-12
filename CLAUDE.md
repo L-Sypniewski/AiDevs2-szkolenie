@@ -23,13 +23,13 @@ dotnet build
 # Run individual projects
 dotnet run --project AiDevs2/AiDevs2-szkolenie.csproj        # http://localhost:5000
 dotnet run --project AiDevs3/AiDevs3.csproj                  # http://localhost:5000
-dotnet run --project AiDevs4/AiDevs4.csproj                  # http://localhost:5050
+dotnet run --project AiDevs4/src/AiDevs4.csproj              # http://localhost:5050
 
 # Run with Aspire orchestration (includes Qdrant, Ollama, Neo4j)
 dotnet run --project AiDevs.AppHost/AiDevs.AppHost.csproj
 
 # Development with hot reload
-dotnet watch --project AiDevs4/AiDevs4.csproj
+dotnet watch --project AiDevs4/src/AiDevs4.csproj
 ```
 
 ## Architecture Patterns
@@ -93,7 +93,7 @@ public static IList<AITool> CreateTools() =>
 ];
 ```
 
-Existing tools in `AiDevs4/Tools/`: FileReader, Unzipper, UrlFetcher
+Existing tools in `AiDevs4/src/Tools/`: FileReader, Unzipper, UrlFetcher
 
 ## Configuration
 
@@ -111,7 +111,7 @@ API keys configured in `appsettings.json`:
 
 Use User Secrets for local development:
 ```bash
-dotnet user-secrets set "Ai:OpenAi:ApiKey" "your-key" --project AiDevs4
+dotnet user-secrets set "Ai:OpenAi:ApiKey" "your-key" --project AiDevs4/src
 ```
 
 ## .NET Aspire Infrastructure
