@@ -79,7 +79,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$TOOL_INPUT\" | grep -qE '\\.(cs|csproj|props|razor)\"'; then dotnet format --include \"$(echo \"$TOOL_INPUT\" | grep -oE '\"[^\"]+\\.(cs|csproj|props|razor)\"' | tr -d '\"')\" 2>/dev/null || true; fi"
+            "command": "dotnet format \"$CLAUDE_PROJECT_DIR/AiDevs4\""
           }
         ]
       }

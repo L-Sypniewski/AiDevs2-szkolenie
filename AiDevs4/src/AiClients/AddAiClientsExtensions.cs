@@ -25,15 +25,15 @@ public static class AddAiClientsExtensions
 
             switch (provider)
             {
-                case AiProvider.OpenAI:
-                    RegisterOpenAiChatModel(services, model, openAiClient);
-                    break;
-                case AiProvider.GithubModels:
-                    RegisterOpenAiChatModel(services, model, openAiGithubClient);
-                    break;
-                case AiProvider.Ollama:
-                    RegisterOllamaChatModel(services, model, aiOptions.Ollama);
-                    break;
+            case AiProvider.OpenAI:
+                RegisterOpenAiChatModel(services, model, openAiClient);
+                break;
+            case AiProvider.GithubModels:
+                RegisterOpenAiChatModel(services, model, openAiGithubClient);
+                break;
+            case AiProvider.Ollama:
+                RegisterOllamaChatModel(services, model, aiOptions.Ollama);
+                break;
             }
         }
 

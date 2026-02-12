@@ -32,6 +32,16 @@ dotnet run --project AiDevs.AppHost/AiDevs.AppHost.csproj
 dotnet watch --project AiDevs4/src/AiDevs4.csproj
 ```
 
+## Using dotnet cli
+Whenever possible, use `dotnet` CLI for
+- Building
+- Running
+- Adding/updating/removing NuGet packages
+- Formatting code (`dotnet format`)
+- adding references between projects or adding projects to solution 
+
+Docs: https://learn.microsoft.com/en-us/dotnet/core/tools/
+
 ## Architecture Patterns
 
 ### Module Auto-Discovery System
