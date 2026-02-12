@@ -34,6 +34,8 @@ public static class AddAiClientsExtensions
             case AiProvider.Ollama:
                 RegisterOllamaChatModel(services, model, aiOptions.Ollama);
                 break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(provider), provider, "Unsupported AI provider");
             }
         }
 

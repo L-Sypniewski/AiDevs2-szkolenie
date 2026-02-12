@@ -15,7 +15,7 @@ public class L00E01_ExampleAgentTask : Lesson
     protected override Delegate GetAnswerDelegate => async (
         [FromServices] IServiceProvider serviceProvider,
         [FromQuery] string question,
-        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4o_Mini_202407,
+        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4_1_Mini_Github,
         CancellationToken cancellationToken = default) =>
     {
         var chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(model.CreateServiceId());
@@ -48,18 +48,16 @@ public class L00E01_ExampleAgentTask : Lesson
     protected override void MapAdditionalEndpoints(IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("agent-with-tools", AgentWithToolsDelegate)
-            .WithName("Agent with tools: Example Agent Task")
-            .WithOpenApi();
+            .WithName("Agent with tools: Example Agent Task");
 
         endpoints.MapGet("file-agent", FileAgentDelegate)
-            .WithName("File agent: Example Agent Task")
-            .WithOpenApi();
+            .WithName("File agent: Example Agent Task");
     }
 
     private static Delegate AgentWithToolsDelegate => async (
         [FromServices] IServiceProvider serviceProvider,
         [FromQuery] string question,
-        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4o_Mini_202407,
+        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4_1_Mini_Github,
         CancellationToken cancellationToken = default) =>
     {
         var chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(model.CreateServiceId());
@@ -113,7 +111,7 @@ public class L00E01_ExampleAgentTask : Lesson
         [FromServices] IServiceProvider serviceProvider,
         [FromServices] HttpClient httpClient,
         [FromQuery] string question,
-        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4o_Mini_202407,
+        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4_1_Mini_Github,
         CancellationToken cancellationToken = default) =>
     {
         var chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(model.CreateServiceId());

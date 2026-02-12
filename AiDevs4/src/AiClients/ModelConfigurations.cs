@@ -9,22 +9,44 @@ public enum AiProvider
 
 public enum ModelConfiguration
 {
-    Gpt4o_202411,
-    Gpt4o_Mini_202407,
-    Gpt4o_Github,
-    Gpt4o_Mini_Github,
-    OllamaPhi
+    // OpenAI API (3 models)
+    Gpt5,
+    Gpt5_Mini,
+    Gpt4_1,
+
+    // GitHub Models (5 models)
+    Gpt4_1_Github,
+    Gpt4_1_Mini_Github,
+    O3_Mini_Github,
+    O4_Mini_Github,
+    Phi4_Github,
+
+    // Ollama (3 models)
+    OllamaLlama31,
+    OllamaDeepSeekR1,
+    OllamaPhi4
 }
 
 public static class ModelConfigurations
 {
     private static readonly Dictionary<ModelConfiguration, (string ModelId, AiProvider Provider)> s_modelMappings = new()
     {
-        { ModelConfiguration.Gpt4o_202411, ("gpt-4o-2024-11-20", AiProvider.OpenAI) },
-        { ModelConfiguration.Gpt4o_Mini_202407, ("gpt-4o-mini-2024-07-18", AiProvider.OpenAI) },
-        { ModelConfiguration.Gpt4o_Github, ("gpt-4o", AiProvider.GithubModels) },
-        { ModelConfiguration.Gpt4o_Mini_Github, ("gpt-4o-mini", AiProvider.GithubModels) },
-        { ModelConfiguration.OllamaPhi, ("phi3:mini", AiProvider.Ollama) }
+        // OpenAI API
+        { ModelConfiguration.Gpt5, ("gpt-5", AiProvider.OpenAI) },
+        { ModelConfiguration.Gpt5_Mini, ("gpt-5-mini", AiProvider.OpenAI) },
+        { ModelConfiguration.Gpt4_1, ("gpt-4.1", AiProvider.OpenAI) },
+
+        // GitHub Models
+        { ModelConfiguration.Gpt4_1_Github, ("gpt-4.1", AiProvider.GithubModels) },
+        { ModelConfiguration.Gpt4_1_Mini_Github, ("gpt-4.1-mini", AiProvider.GithubModels) },
+        { ModelConfiguration.O3_Mini_Github, ("o3-mini", AiProvider.GithubModels) },
+        { ModelConfiguration.O4_Mini_Github, ("o4-mini", AiProvider.GithubModels) },
+        { ModelConfiguration.Phi4_Github, ("phi-4", AiProvider.GithubModels) },
+
+        // Ollama
+        { ModelConfiguration.OllamaLlama31, ("llama3.1", AiProvider.Ollama) },
+        { ModelConfiguration.OllamaDeepSeekR1, ("deepseek-r1", AiProvider.Ollama) },
+        { ModelConfiguration.OllamaPhi4, ("phi4", AiProvider.Ollama) }
     };
 
     public static string GetModelId(this ModelConfiguration config) => s_modelMappings[config].ModelId;

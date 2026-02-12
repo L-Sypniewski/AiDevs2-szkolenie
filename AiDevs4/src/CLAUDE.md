@@ -39,7 +39,7 @@ public class L01E02_MyTask : Lesson
     protected override Delegate GetAnswerDelegate => async (
         [FromServices] IServiceProvider serviceProvider,
         [FromQuery] string question,
-        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4o_Mini_202407,
+        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4_1_Mini_Github,
         CancellationToken cancellationToken = default) =>
     {
         // Implementation

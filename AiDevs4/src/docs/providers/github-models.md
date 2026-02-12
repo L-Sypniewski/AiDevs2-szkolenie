@@ -69,8 +69,11 @@ Or via `appsettings.json`:
 
 | Enum Value | Model ID | Description |
 |------------|----------|-------------|
-| `Gpt4o_Github` | `gpt-4o` | GPT-4 Omni (latest) |
-| `Gpt4o_Mini_Github` | `gpt-4o-mini` | GPT-4 Omni Mini (faster, cheaper) |
+| `Gpt4_1_Github` | `gpt-4.1` | Latest GPT-4 |
+| `Gpt4_1_Mini_Github` | `gpt-4.1-mini` | Cost-efficient |
+| `O3_Mini_Github` | `o3-mini` | Reasoning |
+| `O4_Mini_Github` | `o4-mini` | Latest reasoning |
+| `Phi4_Github` | `phi-4` | Microsoft lightweight |
 
 Browse the full catalog at [github.com/marketplace/models](https://github.com/marketplace/models)
 
@@ -90,7 +93,7 @@ public class MyLesson : Lesson
         CancellationToken cancellationToken = default) =>
     {
         // Use GitHub Models via the enum
-        var model = ModelConfiguration.Gpt4o_Mini_Github;
+        var model = ModelConfiguration.Gpt4_1_Mini_Github;
         var chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(model.CreateServiceId());
 
         var response = await chatClient.CompleteAsync(question, cancellationToken: cancellationToken);
@@ -104,7 +107,7 @@ public class MyLesson : Lesson
 
 ```csharp
 var chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(
-    ModelConfiguration.Gpt4o_Github.CreateServiceId());
+    ModelConfiguration.Gpt4_1_Github.CreateServiceId());
 
 var messages = new List<ChatMessage>
 {
@@ -128,7 +131,7 @@ AIFunction getCurrentWeather = AIFunctionFactory.Create(
 
 // Create chat client with function invocation middleware
 var chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(
-    ModelConfiguration.Gpt4o_Github.CreateServiceId());
+    ModelConfiguration.Gpt4_1_Github.CreateServiceId());
 
 var response = await chatClient.CompleteAsync(
     "What's the weather in Paris?",
@@ -142,7 +145,7 @@ var response = await chatClient.CompleteAsync(
 using Microsoft.Agents.AI;
 
 var chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(
-    ModelConfiguration.Gpt4o_Mini_Github.CreateServiceId());
+    ModelConfiguration.Gpt4_1_Mini_Github.CreateServiceId());
 
 var agent = new ChatClientAgent(
     chatClient,
@@ -221,7 +224,7 @@ jobs:
 ### 429 Too Many Requests
 
 - You've hit rate limits; wait and retry
-- Consider using a smaller model (gpt-4o-mini has higher limits)
+- Consider using a smaller model (gpt-4.1-mini has higher limits)
 
 ### Model Not Found
 

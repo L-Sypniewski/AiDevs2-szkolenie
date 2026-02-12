@@ -12,7 +12,7 @@ public abstract class Lesson : IModule
     public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup(GetType().Name);
-        group.MapGet("answer", GetAnswerDelegate).WithName($"Get answer: {LessonName}").WithOpenApi();
+        group.MapGet("answer", GetAnswerDelegate).WithName($"Get answer: {LessonName}");
 
         MapAdditionalEndpoints(group);
 
