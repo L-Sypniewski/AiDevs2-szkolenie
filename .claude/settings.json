@@ -73,13 +73,13 @@
     "autoAllowBashIfSandboxed": true
   },
   "hooks": {
-    "SessionEnd": [
+    "PostToolUse": [
       {
-        "matcher": "end",
+        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR/ConvoClarity\" && dotnet format && dotnet build"
+            "command": "if echo \"$TOOL_INPUT\" | grep -qE '\\.(cs|csproj|props|razor)\"'; then dotnet format --include \"$(echo \"$TOOL_INPUT\" | grep -oE '\"[^\"]+\\.(cs|csproj|props|razor)\"' | tr -d '\"')\" 2>/dev/null || true; fi"
           }
         ]
       }
