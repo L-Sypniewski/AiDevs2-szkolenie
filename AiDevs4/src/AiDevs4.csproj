@@ -34,4 +34,8 @@
     <Content Include="Tasks\assets\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\AiDevs.ServiceDefaults\AiDevs.ServiceDefaults.csproj" />
+  </ItemGroup>
+
 </Project>

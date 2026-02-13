@@ -28,12 +28,18 @@ public class L00E01_ExampleAgentTask : Lesson
         tools.AddRange(UnzipperTool.CreateTools());
         tools.AddRange(urlFetcherTool.CreateTools());
 
-        var agent = new ChatClientAgent(
+        var baseAgent = new ChatClientAgent(
             chatClient,
             name: "ToolUsingAgent",
             instructions: "You are a helpful assistant with access to file system, URL fetching, and ZIP tools. You can be tasked with open ended questions, and you should use the tools at your disposal to find the answer. Always think step by step and explain your reasoning. If you encounter error you cannot recover from, explain the error and end the session.",
             loggerFactory: loggerFactory,
             tools: tools);
+
+        // Wrap agent with OpenTelemetry for observability in Aspire Dashboard
+        var agent = new OpenTelemetryAgent(baseAgent, sourceName: "AiDevs4")
+        {
+            EnableSensitiveData = true  // Enable sensitive data for development observability
+        };
 
         var task = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Tasks", "assets", "Task.md"), cancellationToken);
         var session = await agent.CreateSessionAsync(cancellationToken);

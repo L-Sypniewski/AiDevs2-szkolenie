@@ -4,6 +4,9 @@ using AiDevs4.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add service defaults (OpenTelemetry, health checks, service discovery)
+builder.AddServiceDefaults();
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -17,6 +20,9 @@ builder.Services.AddAiClients(builder.Configuration);
 builder.RegisterModules(typeof(Program).Assembly);
 
 var app = builder.Build();
+
+// Map health endpoints for Aspire Dashboard
+app.MapDefaultEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
