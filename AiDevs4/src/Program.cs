@@ -1,7 +1,13 @@
+using System.Text.Json.Serialization;
 using AiDevs4.AiClients;
 using AiDevs4.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 builder.Services.AddOpenApi();
 
