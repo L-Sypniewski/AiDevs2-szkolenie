@@ -15,7 +15,7 @@ public class L00E01_ExampleAgentTask : Lesson
     protected override Delegate GetAnswerDelegate => async (
         [FromServices] IServiceProvider serviceProvider,
         [FromQuery] string question,
-        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt4_1_Mini_Github,
+        [FromQuery] ModelConfiguration model = ModelConfiguration.Gpt5_Nano_Github,
         CancellationToken cancellationToken = default) =>
     {
         var chatClient = serviceProvider.GetRequiredKeyedService<IChatClient>(model.CreateServiceId());

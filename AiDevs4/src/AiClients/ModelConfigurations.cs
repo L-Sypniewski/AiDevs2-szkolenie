@@ -41,6 +41,7 @@ public static class ModelConfigurations
         // GitHub Models
         { ModelConfiguration.Gpt4_1_Github, ("gpt-4.1", AiProvider.GithubModels) },
         { ModelConfiguration.Gpt4_1_Mini_Github, ("gpt-4.1-mini", AiProvider.GithubModels) },
+        { ModelConfiguration.Gpt5_Mini_Github, ("gpt-5-mini", AiProvider.GithubModels) },
         { ModelConfiguration.Gpt5_Nano_Github, ("gpt-5-nano", AiProvider.GithubModels) },
         { ModelConfiguration.O3_Mini_Github, ("o3-mini", AiProvider.GithubModels) },
         { ModelConfiguration.O4_Mini_Github, ("o4-mini", AiProvider.GithubModels) },
