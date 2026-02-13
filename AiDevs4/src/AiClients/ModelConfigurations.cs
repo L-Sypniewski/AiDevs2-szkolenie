@@ -14,9 +14,11 @@ public enum ModelConfiguration
     Gpt5_Mini,
     Gpt4_1,
 
-    // GitHub Models (5 models)
+    // GitHub Models (7 models)
     Gpt4_1_Github,
     Gpt4_1_Mini_Github,
+    Gpt5_Mini_Github,
+    Gpt5_Nano_Github,
     O3_Mini_Github,
     O4_Mini_Github,
     Phi4_Github,
@@ -39,6 +41,7 @@ public static class ModelConfigurations
         // GitHub Models
         { ModelConfiguration.Gpt4_1_Github, ("gpt-4.1", AiProvider.GithubModels) },
         { ModelConfiguration.Gpt4_1_Mini_Github, ("gpt-4.1-mini", AiProvider.GithubModels) },
+        { ModelConfiguration.Gpt5_Nano_Github, ("gpt-5-nano", AiProvider.GithubModels) },
         { ModelConfiguration.O3_Mini_Github, ("o3-mini", AiProvider.GithubModels) },
         { ModelConfiguration.O4_Mini_Github, ("o4-mini", AiProvider.GithubModels) },
         { ModelConfiguration.Phi4_Github, ("phi-4", AiProvider.GithubModels) },
