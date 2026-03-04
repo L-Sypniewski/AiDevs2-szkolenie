@@ -17,10 +17,17 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Suppress NuGet vulnerability warnings for transitive dependencies -->
+    <NoWarn>$(NoWarn);NU1902</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Aspire AI Client Packages -->
     <PackageReference Include="Aspire.Azure.AI.Inference" />
+    <PackageReference Include="Aspire.OpenAI" />
+    <!-- Ollama package for Aspire integration -->
+    <PackageReference Include="CommunityToolkit.Aspire.OllamaSharp" />
+    <!-- Core AI packages -->
     <PackageReference Include="Microsoft.Agents.AI" />
     <PackageReference Include="Microsoft.Agents.AI.OpenAI" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

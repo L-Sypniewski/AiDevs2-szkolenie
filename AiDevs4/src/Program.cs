@@ -15,7 +15,9 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddOpenApi();
 
 builder.Services.AddHttpClient();
-builder.Services.AddAiClients(builder.Configuration);
+
+// Register AI clients using Aspire integration with keyed services
+builder.AddAiClientsFromAspire();
 
 builder.RegisterModules(typeof(Program).Assembly);
 
