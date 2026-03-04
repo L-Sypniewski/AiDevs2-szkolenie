@@ -162,5 +162,5 @@ public record PhotoQualityAnalysis
     public bool IsDark { get; set; }
     public bool IsBright { get; set; }
     public bool HasNoiseOrGlitches { get; set; }
-    public string RecommendedAction { get; set; }
+    public string? RecommendedAction { get; set; }
 }

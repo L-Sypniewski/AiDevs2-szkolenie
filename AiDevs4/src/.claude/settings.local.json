@@ -1,0 +1,15 @@
+{
+  "enabledMcpjsonServers": [
+    "microsoft-docs",
+    "context7",
+    "sequential-thinking",
+    "gh-repos",
+    "gh-issues",
+    "gh-pull",
+    "zai-mcp-server",
+    "web-search-prime",
+    "web-reader",
+    "zread"
+  ],
+  "enableAllProjectMcpServers": true
+}

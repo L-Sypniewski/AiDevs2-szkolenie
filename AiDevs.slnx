@@ -5,27 +5,15 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="AiDevs.AppHost\AiDevs.AppHost.csproj" Type="Classic C#">
-    <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
-    <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
-    <Configuration Solution="Release|x64" Project="Release|Any CPU" />
-    <Configuration Solution="Release|x86" Project="Release|Any CPU" />
   </Project>
   <Project Path="AiDevs.ServiceDefaults\AiDevs.ServiceDefaults.csproj" Type="Classic C#">
-    <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
-    <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
-    <Configuration Solution="Release|x64" Project="Release|Any CPU" />
-    <Configuration Solution="Release|x86" Project="Release|Any CPU" />
   </Project>
   <Project Path="AiDevs2\AiDevs2-szkolenie.csproj" Type="Classic C#">
-    <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
-    <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
-    <Configuration Solution="Release|x64" Project="Release|Any CPU" />
-    <Configuration Solution="Release|x86" Project="Release|Any CPU" />
   </Project>
   <Project Path="AiDevs3\AiDevs3.csproj" Type="Classic C#">
-    <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
-    <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
-    <Configuration Solution="Release|x64" Project="Release|Any CPU" />
-    <Configuration Solution="Release|x86" Project="Release|Any CPU" />
+  </Project>
+  <Project Path="AiDevs4\src\AiDevs4.csproj" Type="Classic C#">
+  </Project>
+  <Project Path="AiDevs4\aspire\AiDevs4Aspire.csproj" Type="Classic C#">
   </Project>
 </Solution>

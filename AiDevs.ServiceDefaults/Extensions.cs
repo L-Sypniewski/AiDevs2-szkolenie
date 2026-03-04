@@ -55,6 +55,8 @@ public static class Extensions
                 metrics.AddAspNetCoreInstrumentation()
                     .AddMeter("Microsoft.Extensions.Ai")
                     .AddMeter("Experimental.Microsoft.Extensions.AI")
+                    .AddMeter("Microsoft.Agents.AI")
+                    .AddMeter("Experimental.Microsoft.Extensions.Agents")
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
             })
@@ -63,6 +65,8 @@ public static class Extensions
                 tracing.AddSource(builder.Environment.ApplicationName)
                     .AddSource("Microsoft.Extensions.Ai")
                     .AddSource("Experimental.Microsoft.Extensions.AI")
+                    .AddSource("Microsoft.Agents.AI")
+                    .AddSource("Experimental.Microsoft.Extensions.Agents")
                     .AddSource("Qdrant.Client")
                     .AddSource("Qdrant")
                     .AddAspNetCoreInstrumentation()

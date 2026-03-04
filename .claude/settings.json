@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "plansDirectory": "./.plans/claude",
+  "permissions": {
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(gh pr create:*)"
+    ],
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(curl:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet run:*)",
+      "Bash(gh repo view:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm install)",
+      "Bash(npm run lint)",
+      "Bash(npm run type-check:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx wrangler deployments:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "mcp__web-reader",
+      "mcp__web-search-prime",
+      "mcp__zread",
+      "mcp__sequential-thinking",
+      "mcp__context7",
+      "mcp__microsoft-docs",
+      "mcp__playwright",
+      "mcp__web-search-prime__*",
+      "Bash(gh issue view:*)",
+      "mcp__supabase__get_project_url",
+      "WebFetch(domain:claude.com)",
+      "WebFetch(domain:www.anthropic.com)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet format:*)",
+      "Bash(dotnet restore:*)",
+      "WebFetch(domain:aka.ms)",
+      "Bash(find:*)",
+      "mcp__cloudflare-docs__search_cloudflare_documentation",
+      "mcp__cloudflare-workers__accounts_list",
+      "mcp__cloudflare-workers__set_active_account",
+      "mcp__cloudflare-workers__workers_builds_list_builds",
+      "mcp__cloudflare-workers__workers_builds_set_active_worker",
+      "mcp__cloudflare-workers__workers_get_worker",
+      "mcp__cloudflare-workers__workers_list",
+      "mcp__context7__get-library-docs",
+      "mcp__context7__resolve-library-id",
+      "mcp__github__create_branch",
+      "mcp__github__get_file_contents",
+      "mcp__github__search_repositories",
+      "mcp__microsoft-docs__microsoft_docs_fetch",
+      "mcp__microsoft-docs__microsoft_docs_search",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__sequentialthinking__sequentialthinking",
+      "Read(//home/gombka/Pictures/Screenshots/**)",
+      "Read(//tmp/claude-code-toolkit/**)",
+      "WebFetch(domain:developers.cloudflare.com)",
+      "WebFetch(domain:docs.astro.build)",
+      "WebFetch(domain:docs.github.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.meziantou.net)",
+      "WebSearch",
+      "WebFetch(domain:supabase-community.github.io)",
+      "Bash(git rm:*)",
+      "Bash(dotnet list:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "sandbox": {
+    "enabled": false,
+    "autoAllowBashIfSandboxed": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dotnet format \"$CLAUDE_PROJECT_DIR/AiDevs4\""
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {},
+  "extraKnownMarketplaces": {
+    "my-toolkit": {
+      "source": {
+        "source": "github",
+        "repo": "L-Sypniewski/claude-code-toolkit"
+      }
+    }
+  }
+}
