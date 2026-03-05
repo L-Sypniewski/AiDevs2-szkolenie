@@ -6,3 +6,12 @@ sortby -f $MAGICFIELD: Reorders the stream based on a targeted attribute. The va
 intelligence --prompt "get glitch": Executes a targeted extraction routine. It identifies and isolates singular character anomalies or substitutions (artifacts) from the natural language descriptions on each card.
 paste -sd "": A serial joiner that collapses the individual character outputs into a single continuous string (part) by removing all newline characters and delimiters.
 Variable Resolution: The resultant part variable is appended to the root domain to generate the executable URL: https://ag3nts.org/${part}.
+
+
+```bash-pseduo-code
+part=$(cat /agents/V/cards/ / \
+sortby -f $MAGICFIELD \
+intelligence --prompt "get glitch" / \
+paste -sd '')
+open "https://ag3nts.org/${part}"
+```
